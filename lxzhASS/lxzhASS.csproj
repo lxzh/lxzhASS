@@ -1,0 +1,314 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{DBE08FDF-C75E-45DD-8823-13C3E84ED91D}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>lxzh</RootNamespace>
+    <AssemblyName>lxzhASS</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <StartupObject>lxzh.Program</StartupObject>
+    <ApplicationIcon>Resources\ass.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Design" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="LxzhControl\LTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="LxzhControl\LTextBox.Designer.cs">
+      <DependentUpon>LTextBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LxzhControl\LCheckBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="LxzhControl\LCheckBox.Designer.cs">
+      <DependentUpon>LCheckBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LxzhControl\LComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="LxzhControl\LComboBox.Designer.cs">
+      <DependentUpon>LComboBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LxzhControl\LxzhColorBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="LxzhControl\LxzhColorBox.Designer.cs">
+      <DependentUpon>LxzhColorBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LxzhControl\ColorBoxDesginer.cs" />
+    <Compile Include="LxzhControl\LxzhTipLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="LxzhControl\LxzhTipLabel.Designer.cs">
+      <DependentUpon>LxzhTipLabel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LxzhView\CaptureForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LxzhView\CaptureForm.Designer.cs">
+      <DependentUpon>CaptureForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LxzhView\StickyForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LxzhView\StickyForm.Designer.cs">
+      <DependentUpon>StickyForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LxzhControl\ImageProcessBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="LxzhControl\ImageProcessBox.Designer.cs">
+      <DependentUpon>ImageProcessBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LxzhClass\KeyHook.cs" />
+    <Compile Include="LxzhClass\KeyModel.cs" />
+    <Compile Include="LxzhControl\LxzhAlphaTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="LxzhControl\LxzhComboBox\LxzhComboBoxItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="LxzhControl\LxzhComboBox\LxzhComboBoxItem.Designer.cs">
+      <DependentUpon>LxzhComboBoxItem.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LxzhControl\LxzhComboBox\ControlProperties.cs" />
+    <Compile Include="LxzhControl\LxzhComboBox\GripBounds.cs" />
+    <Compile Include="LxzhControl\LxzhComboBox\LxzhComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="LxzhControl\LxzhComboBox\LxzhComboBox.Designer.cs">
+      <DependentUpon>LxzhComboBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LxzhControl\LxzhComboBox\LxzhListControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LxzhControl\LxzhComboBox\LxzhListControl.Designer.cs">
+      <DependentUpon>LxzhListControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LxzhControl\LxzhComboBox\LxzhRoundControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LxzhControl\LxzhComboBox\LxzhRoundControl.Designer.cs">
+      <DependentUpon>LxzhRoundControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LxzhControl\LxzhComboBox\LxzhScrollBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LxzhControl\LxzhComboBox\LxzhScrollBar.Designer.cs">
+      <DependentUpon>LxzhScrollBar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LxzhControl\LxzhComboBox\NativeMethods.cs" />
+    <Compile Include="LxzhControl\LxzhComboBox\Popup.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="LxzhControl\LxzhComboBox\Popup.Designer.cs">
+      <DependentUpon>Popup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LxzhClass\MouseHook.cs" />
+    <Compile Include="LxzhControl\LxzhTextInput.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="LxzhControl\LxzhTextInput.designer.cs">
+      <DependentUpon>LxzhTextInput.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LxzhControl\LxzhToolButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="LxzhControl\LxzhToolButton.Designer.cs">
+      <DependentUpon>LxzhToolButton.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LxzhControl\ToolButtonDesigner.cs" />
+    <Compile Include="LxzhClass\Win32.cs" />
+    <Compile Include="LxzhClass\FormUtil.cs" />
+    <Compile Include="LxzhView\ScreenForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LxzhView\ScreenForm.Designer.cs">
+      <DependentUpon>ScreenForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LxzhClass\HotKey.cs" />
+    <Compile Include="LxzhView\MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LxzhView\MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LxzhClass\IniFile.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="LxzhControl\LxzhColorBox.resx">
+      <DependentUpon>LxzhColorBox.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LxzhControl\LxzhTipLabel.resx">
+      <DependentUpon>LxzhTipLabel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LxzhView\CaptureForm.resx">
+      <DependentUpon>CaptureForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LxzhView\StickyForm.resx">
+      <DependentUpon>StickyForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LxzhView\ScreenForm.resx">
+      <DependentUpon>ScreenForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LxzhControl\ImageProcessBox.resx">
+      <DependentUpon>ImageProcessBox.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LxzhControl\LxzhAlphaTextBox.resx">
+      <DependentUpon>LxzhAlphaTextBox.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LxzhControl\LxzhComboBox\LxzhComboBox.resx">
+      <DependentUpon>LxzhComboBox.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LxzhControl\LxzhComboBox\LxzhListControl.resx">
+      <DependentUpon>LxzhListControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LxzhControl\LxzhComboBox\LxzhRoundControl.resx">
+      <DependentUpon>LxzhRoundControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LxzhControl\LxzhComboBox\LxzhScrollBar.resx">
+      <DependentUpon>LxzhScrollBar.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LxzhView\MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LxzhView\SettingForm.resx">
+      <DependentUpon>SettingForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LxzhControl\LxzhTextInput.resx">
+      <DependentUpon>LxzhTextInput.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LxzhView\Toast.resx">
+      <DependentUpon>Toast.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LxzhControl\LxzhToolButton.resx">
+      <DependentUpon>LxzhToolButton.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="LxzhClass\RegistryUtil.cs" />
+    <Compile Include="LxzhView\SettingForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LxzhView\SettingForm.Designer.cs">
+      <DependentUpon>SettingForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LxzhView\Toast.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LxzhView\Toast.designer.cs">
+      <DependentUpon>Toast.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LxzhClass\Util.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\ass.ico" />
+    <None Include="bin\Debug\config.ini" />
+    <None Include="Resources\config.ini" />
+    <None Include="Resources\exit.ico" />
+    <None Include="Resources\arrow.png" />
+    <None Include="Resources\brush.png" />
+    <None Include="Resources\cancel.png" />
+    <None Include="Resources\close.png" />
+    <None Include="Resources\color.png" />
+    <None Include="Resources\cross.png" />
+    <None Include="Resources\cursor.png" />
+    <None Include="Resources\ellips.png" />
+    <None Include="Resources\large.png" />
+    <None Include="Resources\logo.png" />
+    <None Include="Resources\middle.png" />
+    <None Include="Resources\none.png" />
+    <None Include="Resources\ok.png" />
+    <None Include="Resources\out.png" />
+    <None Include="Resources\rect.png" />
+    <None Include="Resources\save.png" />
+    <None Include="Resources\separator.png" />
+    <None Include="Resources\small.png" />
+    <None Include="Resources\text.png" />
+    <None Include="Resources\cross.cur" />
+    <None Include="LxzhControl\LxzhComboBox\arrowlist.png" />
+    <Content Include="Resources\icon.ico" />
+    <None Include="Resources\setting.ico" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
