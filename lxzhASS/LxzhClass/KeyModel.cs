@@ -94,7 +94,7 @@ namespace lxzh {
                 hotKeyValue = new int[5];
                 string hotkey = IniFile.ReadIniData(Util.CONFIG_SECTION, keyName, noText).ToLower().Trim().Replace(" ", "");
                 if (hotkey == "")
-                    hotkey = Util.DEFAULT_HOTKEY_WHOLE.ToLower();
+                    hotkey = defaultHotkey.ToLower();
                 hotKeyValue[0] = hotkey.Contains("alt") ? 1 : 0;
                 hotKeyValue[1] = hotkey.Contains("ctrl") ? 1 : 0;
                 hotKeyValue[2] = hotkey.Contains("shift") ? 1 : 0;

@@ -49,7 +49,7 @@ namespace lxzh
 
             g.CopyFromScreen(rect.Left, rect.Top, 0, 0, new Size(rect.Width, rect.Height));
 
-            string filename = getPath();
+            string filename = Util.GetSavePicPath();
             bmp.Save(filename);
             saveFormInfo(rect);
             Clipboard.SetImage(bmp);
@@ -58,18 +58,6 @@ namespace lxzh
             //toast.StartPos = ContentAlignment.BottomRight;
             //toast.Show();
             this.Close();
-        }
-
-        private string getPath() {
-            string path = IniFile.ReadIniData(Util.CONFIG_SECTION, Util.SAVE_PIC_PATH, Util.DEFAULT_SAVE_PIC_PATH);
-            string extention = IniFile.ReadIniData(Util.CONFIG_SECTION, Util.SAVE_FILE_EXTENSION, Util.DEFAULT_FILE_EXTENSION);
-            if (string.IsNullOrEmpty(path))
-                path = Util.DEFAULT_SAVE_PIC_PATH;
-            if (string.IsNullOrEmpty(extention))
-                extention = Util.DEFAULT_FILE_EXTENSION;
-            if (!Directory.Exists(path))
-                CreateDeepFolder(path);
-            return string.Format("{0}\\{1}.{2}", path, DateTime.Now.ToString("yyyyMMdd HHmmss"), extention);
         }
 
         private Rectangle getFormInfo(Rectangle rect) {
@@ -85,19 +73,6 @@ namespace lxzh
             IniFile.WriteIniData(Util.FORM_SECTION, "y", rect.Top + "");
             IniFile.WriteIniData(Util.FORM_SECTION, "width", rect.Width + "");
             IniFile.WriteIniData(Util.FORM_SECTION, "height", rect.Height + "");
-        }
-
-        private bool CreateDeepFolder(string path)
-        {
-            bool result;
-            DirectoryInfo di = new DirectoryInfo(path);
-            if (!di.Parent.Exists)
-            {
-                result = CreateDeepFolder(di.Parent.FullName);
-            }
-            di.Create();
-            result = true;
-            return result;
         }
     }
 }

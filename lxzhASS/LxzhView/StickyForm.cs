@@ -225,13 +225,17 @@ namespace lxzh
         protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
             int w = Screen.PrimaryScreen.Bounds.Width;
             int h = Screen.PrimaryScreen.Bounds.Height;
-            if (width < 100) width = 100;
-            if (width > Screen.PrimaryScreen.Bounds.Width) width = w;
+            if (width < 100) 
+                width = 100;
+            if (width > Screen.PrimaryScreen.Bounds.Width) 
+                width = w;
             if (height < 30) height = 30;
-            if (height > Screen.PrimaryScreen.Bounds.Height) height = h;
+            if (height > Screen.PrimaryScreen.Bounds.Height) 
+                height = h;
             bMinimum = width == 100 || height == 30;
             bMaxmum = width == w || height == h;
-            if (bMaxmum) x = y = 0;
+            if (bMaxmum) 
+                x = y = 0;
             base.SetBoundsCore(x, y, width, height, specified);
         }
 
@@ -291,7 +295,7 @@ namespace lxzh
             SaveFileDialog saveDlg = new SaveFileDialog();
             saveDlg.Filter = "Bitmap(*.bmp)|*.bmp|JPEG(*.jpg)|*.jpg|PNG(*.png)|*.png";
             saveDlg.FilterIndex = 3;
-            saveDlg.FileName = getFileName();
+            saveDlg.FileName = Util.GetSavePicPath();
             if (saveDlg.ShowDialog() == DialogResult.OK) {
                 using (Bitmap bmp = bOriginal ? bitmap.Clone() as Bitmap :
                     new Bitmap(this.Width - 2, this.Height - 2, PixelFormat.Format24bppRgb)) {
@@ -313,19 +317,6 @@ namespace lxzh
                     }
                 }
             }
-        }
-        private string getFileName() {
-            string extention = IniFile.ReadIniData(Util.CONFIG_SECTION, Util.SAVE_FILE_EXTENSION, Util.DEFAULT_FILE_EXTENSION);
-            if (string.IsNullOrEmpty(extention))
-                extention = Util.DEFAULT_FILE_EXTENSION;
-            return string.Format("{0}.{1}", DateTime.Now.ToString("yyyyMMdd HHmmss"), extention);
-        }
-
-        //保存时获取当前时间字符串作文默认文件名
-        private string GetTimeString() {
-            DateTime time = DateTime.Now;
-            return time.Date.ToShortDateString().Replace("/", "") + "_" +
-                time.ToLongTimeString().Replace(":", "");
         }
     }
 }

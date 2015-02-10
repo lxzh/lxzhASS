@@ -83,8 +83,7 @@ namespace lxzh
         public CaptureForm() {
             InitializeComponent();
             this.Location = new Point(0, 0);
-            this.Size = new Size(Screen.PrimaryScreen.Bounds.Width,
-                Screen.PrimaryScreen.Bounds.Height);
+            this.Size = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
 
             mHook = new MouseHook();
             this.FormClosing += (s, e) => { mHook.UnLoadHook(); this.DelResource(); };
@@ -97,8 +96,10 @@ namespace lxzh
         }
 
         private void DelResource() {
-            if (bmpLayerCurrent != null) bmpLayerCurrent.Dispose();
-            if (bmpLayerShow != null) bmpLayerShow.Dispose();
+            if (bmpLayerCurrent != null) 
+                bmpLayerCurrent.Dispose();
+            if (bmpLayerShow != null) 
+                bmpLayerShow.Dispose();
             historyLayer.Clear();
             imageProcessBox.DeleResource();
             GC.Collect();
@@ -122,11 +123,11 @@ namespace lxzh
             colorBox.ColorChanged += (s, e) => txtDrawText.ForeColor = e.Color;
         }
 
-        private void FrmCapture_Load(object sender, EventArgs e) {
+        private void CaptureForm_Load(object sender, EventArgs e) {
             this.InitMember();
             imageProcessBox.BaseImage = CaptureForm.GetScreen(this.isCaptureCursor,this.isFromClipBoard);
             mHook.SetHook();
-            mHook.MHookEvent += new MouseHook.MHookEventHandler(m_MHook_MHookEvent);
+            mHook.MHookEvent += new MouseHook.MHookEventHandler(mHook_MHookEvent);
             imageProcessBox.IsDrawOperationDot = false;
             this.BeginInvoke(new MethodInvoker(() => this.Enabled = false));
             //
@@ -142,7 +143,7 @@ namespace lxzh
             //timer1.Enabled = true;
         }
 
-        private void m_MHook_MHookEvent(object sender, MHookEventArgs e) {
+        private void mHook_MHookEvent(object sender, MHookEventArgs e) {
             //如果窗体禁用 调用控件的方法设置信息显示位置
             if (!this.Enabled)      //貌似Hook不能精确坐标(Hook最先执行,执行完后的坐标可能与执行时传入的坐标发生了变化 猜测是这样) 所以放置了一个timer检测
                 imageProcessBox.SetInfoPoint(MousePosition.X, MousePosition.Y);
@@ -163,8 +164,6 @@ namespace lxzh
 
             if (!this.Enabled)
                 this.FoundAndDrawWindowRect();
-
-
             #endregion
         }
         /// <summary>
@@ -186,47 +185,47 @@ namespace lxzh
         /// 窗体接收到的按键点击事件
         /// 处理方向键事件，移动选框位置
         /// </summary>
-        private void FrmCapture_KeyDown(object sender, KeyEventArgs e) {
+        private void CaptureForm_KeyDown(object sender, KeyEventArgs e) {
             if (e.KeyValue >= 37 && e.KeyValue <= 40 && !txtDrawText.Visible) {
-                Rectangle tmpRect = imageProcessBox.SelectedRect;
-                tmpRect.Width -= 1;
-                tmpRect.Height -= 1;
+                Rectangle rect = imageProcessBox.SelectedRect;
+                rect.Width -= 1;
+                rect.Height -= 1;
                 switch (e.KeyData) {
                     case Keys.Left:
-                        if (tmpRect.X > 0) {
-                            tmpRect.X -= 1;
+                        if (rect.X > 0) {
+                            rect.X -= 1;
                             Win32.SetCursorPos(MousePosition.X - 1, MousePosition.Y);
                         }
                         break;
                     case Keys.Up:
-                        if (tmpRect.Y > 0) {
-                            tmpRect.Y -= 1;
+                        if (rect.Y > 0) {
+                            rect.Y -= 1;
                             Win32.SetCursorPos(MousePosition.X, MousePosition.Y - 1);
                         }
                         break;
                     case Keys.Right:
-                        if (tmpRect.Right < this.Width) {
-                            tmpRect.X += 1;
+                        if (rect.Right < this.Width) {
+                            rect.X += 1;
                             Win32.SetCursorPos(MousePosition.X + 1, MousePosition.Y);
                         }
                         break;
                     case Keys.Down:
-                        if (tmpRect.Bottom < this.Height) {
-                            tmpRect.Y += 1;
+                        if (rect.Bottom < this.Height) {
+                            rect.Y += 1;
                             Win32.SetCursorPos(MousePosition.X, MousePosition.Y + 1);
                         }
                         break;
                 }
-                imageProcessBox.SelectedRect = tmpRect;
+                imageProcessBox.SelectedRect = rect;
                 SetToolBarLocation();
                 this.Refresh();
             }
             switch (e.KeyData) {
                 case Keys.Control | Keys.S:
-                    tBtn_Save_Click(sender, e);
+                    btnSave_Click(sender, e);
                     break;
                 case Keys.Control | Keys.Z:
-                    tBtn_Reset_Click(sender, e);
+                    btnReset_Click(sender, e);
                     break;
                 case Keys.Escape:
                     this.Close();
@@ -311,11 +310,11 @@ namespace lxzh
                 this.Cursor = crossCursor;
             else if (!imageProcessBox.SelectedRect.Contains(e.Location))
                 this.Cursor = Cursors.Default;
-            Rectangle tmpRect = new Rectangle();
-            tmpRect.X = imageProcessBox.SelectedRect.X-2;
-            tmpRect.Y = imageProcessBox.SelectedRect.Y-2;
-            tmpRect.Width = imageProcessBox.SelectedRect.Width + 6;
-            tmpRect.Height = imageProcessBox.SelectedRect.Height + 6;
+            Rectangle rect = new Rectangle();
+            rect.X = imageProcessBox.SelectedRect.X-2;
+            rect.Y = imageProcessBox.SelectedRect.Y-2;
+            rect.Width = imageProcessBox.SelectedRect.Width + 6;
+            rect.Height = imageProcessBox.SelectedRect.Height + 6;
 
             if (imageProcessBox.IsStartDraw && plTool.Visible)   //在重置选取的时候 重置工具条位置(成立于移动选取的时候)
                 this.SetToolBarLocation();
@@ -357,8 +356,8 @@ namespace lxzh
                         int X = imageProcessBox.SelectedRect.Location.X;
                         int Y = imageProcessBox.SelectedRect.Location.Y;
                         float len = (float)Math.Sqrt(Math.Pow(ptCurrent.X - ptOriginal.X, 2) + Math.Pow(ptCurrent.Y - ptOriginal.Y, 2));
-                        float k = (ptCurrent.Y - ptOriginal.Y) * 1.0F / (ptCurrent.X - ptOriginal.X);
-                        float b = ptOriginal.Y - k * ptOriginal.X;
+                        //float k = (ptCurrent.Y - ptOriginal.Y) * 1.0F / (ptCurrent.X - ptOriginal.X);
+                        //float b = ptOriginal.Y - k * ptOriginal.X;
                         float sink = (ptCurrent.Y - ptOriginal.Y) / len;
                         float cosk = (ptCurrent.X - ptOriginal.X) / len;
                         PointF[] points;
@@ -399,8 +398,6 @@ namespace lxzh
                             points[4].Y = tmpY - h / 50 * cosk - Y;
 
                         }
-                        
-
                         //AdjustableArrowCap lineArrow =new AdjustableArrowCap(10, 10, true);
                         //p.StartCap = LineCap.Round;
                         //p.CustomEndCap = lineArrow;
@@ -410,11 +407,9 @@ namespace lxzh
                         //g.DrawPolygon(p, points);
                         imageProcessBox.Invalidate();
                     }
-
                     #endregion
 
                     #region    绘制线条
-
                     if (btnBrush.IsSelected) {
                         Point ptTemp = (Point)((Size)ptOriginal - (Size)imageProcessBox.SelectedRect.Location);
                         p.LineJoin = System.Drawing.Drawing2D.LineJoin.Round;
@@ -422,9 +417,7 @@ namespace lxzh
                         ptOriginal = e.Location;
                         imageProcessBox.Invalidate();
                     }
-
                     #endregion
-
                     p.Dispose();
                 }
             }
@@ -539,7 +532,7 @@ namespace lxzh
         }
 
         //撤销
-        private void tBtn_Reset_Click(object sender, EventArgs e) {
+        private void btnReset_Click(object sender, EventArgs e) {
             using (Graphics g = Graphics.FromImage(bmpLayerShow)) {
                 g.Clear(Color.Transparent);     //清空当前临时显示的图像
             }
@@ -560,11 +553,11 @@ namespace lxzh
             }
         }
 
-        private void tBtn_Save_Click(object sender, EventArgs e) {
+        private void btnSave_Click(object sender, EventArgs e) {
             SaveFileDialog saveDlg = new SaveFileDialog();
             saveDlg.Filter = "Bitmap(*.bmp)|*.bmp|JPEG(*.jpg)|*.jpg|PNG(*.png)|*.png";
             saveDlg.FilterIndex = 3;
-            saveDlg.FileName = "CAPTURE_" + GetTimeString();
+            saveDlg.FileName = Util.GetSavePicPath();
             if (saveDlg.ShowDialog() == DialogResult.OK) {
                 switch (saveDlg.FilterIndex) {
                     case 1:
@@ -593,7 +586,7 @@ namespace lxzh
             this.Close();
         }
 
-        private void tBtn_Out_Click(object sender, EventArgs e) {
+        private void btnSticky_Click(object sender, EventArgs e) {
             new StickyForm(bmpLayerCurrent.Clone() as Bitmap).Show();
             this.Close();
         }
@@ -610,7 +603,8 @@ namespace lxzh
         //根据鼠标位置找寻窗体并绘制边框
         private void FoundAndDrawWindowRect() {
             Win32.LPPOINT pt = new Win32.LPPOINT();
-            pt.X = MousePosition.X; pt.Y = MousePosition.Y;
+            pt.X = MousePosition.X; 
+            pt.Y = MousePosition.Y;
             IntPtr hWnd = Win32.ChildWindowFromPointEx(Win32.GetDesktopWindow(), pt,
                 Win32.CWP_SKIPINVISIBL | Win32.CWP_SKIPDISABLED);
             if (hWnd != IntPtr.Zero) {
@@ -629,16 +623,16 @@ namespace lxzh
             }
         }
         //获取桌面图像
-        private static Bitmap GetScreen(bool bCaptureCursor,bool bFromClipBoard) {
-            Bitmap bmp = new Bitmap(Screen.PrimaryScreen.Bounds.Width,
-                    Screen.PrimaryScreen.Bounds.Height);
+        private static Bitmap GetScreen(bool bCaptureCursor, bool bFromClipBoard) {
+            Bitmap bmp = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
             if (bCaptureCursor)      //是否捕获鼠标
                 DrawCurToScreen();
 
             //做完以上操作 才开始捕获桌面图像
             using (Graphics g = Graphics.FromImage(bmp)) {
                 g.CopyFromScreen(0, 0, 0, 0, bmp.Size);
-                if (!bFromClipBoard) return bmp;
+                if (!bFromClipBoard)
+                    return bmp;
                 using (Image imgClip = Clipboard.GetImage()) {
                     if (imgClip != null) {
                         using (SolidBrush sb = new SolidBrush(Color.FromArgb(150, 0, 0, 0))) {
@@ -718,12 +712,6 @@ namespace lxzh
             }
             Bitmap bmpTemp = bmpLayerCurrent.Clone() as Bitmap;
             historyLayer.Add(bmpTemp);
-        }
-        //保存时获取当前时间字符串作文默认文件名
-        private string GetTimeString() {
-            DateTime time = DateTime.Now;
-            return time.Date.ToShortDateString().Replace("/", "") + "_" +
-                time.ToLongTimeString().Replace(":", "");
         }
     }
 }

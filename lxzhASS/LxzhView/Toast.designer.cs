@@ -44,12 +44,12 @@
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.lblDisplayText.BackColor = System.Drawing.Color.Transparent;
-            this.lblDisplayText.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.lblDisplayText.Font = new System.Drawing.Font("微软雅黑", 10F);
             this.lblDisplayText.ForeColor = System.Drawing.Color.Snow;
-            this.lblDisplayText.Location = new System.Drawing.Point(1, 42);
+            this.lblDisplayText.Location = new System.Drawing.Point(1, 20);
             this.lblDisplayText.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblDisplayText.Name = "lblDisplayText";
-            this.lblDisplayText.Size = new System.Drawing.Size(213, 25);
+            this.lblDisplayText.Size = new System.Drawing.Size(124, 20);
             this.lblDisplayText.TabIndex = 1;
             this.lblDisplayText.Text = "1";
             this.lblDisplayText.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -60,7 +60,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(219, 109);
+            this.ClientSize = new System.Drawing.Size(130, 60);
             this.Controls.Add(this.lblDisplayText);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;

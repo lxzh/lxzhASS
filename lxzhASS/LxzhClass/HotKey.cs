@@ -60,7 +60,7 @@ namespace lxzh
             int[] hotKeyValue = new int[5];
             string hotkey = IniFile.ReadIniData(Util.CONFIG_SECTION, keyModel.KeyName, keyModel.DefaultHotkey).ToLower().Trim().Replace(" ", "");
             if (hotkey == "")
-                hotkey = Util.DEFAULT_HOTKEY_WHOLE.ToLower();
+                hotkey = keyModel.DefaultHotkey.ToLower();
             int assistKeyCount = -1;
             while (assistKeyCount < 1) {
                 if (assistKeyCount == -1) {

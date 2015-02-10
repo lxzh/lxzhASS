@@ -23,7 +23,7 @@ namespace lxzh {
 
         //const int EN_HSCROLL       =   0x0601;
         //const int EN_VSCROLL       =   0x0602;
-
+        public const int WM_HOTKEY = 0x0312;
         public const int WM_HSCROLL = 0x0114;
         public const int WM_VSCROLL = 0x0115;
 

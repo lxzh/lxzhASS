@@ -14,6 +14,10 @@
     <FileAlignment>512</FileAlignment>
     <StartupObject>lxzh.Program</StartupObject>
     <ApplicationIcon>Resources\ass.ico</ApplicationIcon>
+    <SccProjectName>Svn</SccProjectName>
+    <SccLocalPath>Svn</SccLocalPath>
+    <SccAuxPath>Svn</SccAuxPath>
+    <SccProvider>SubversionScc</SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -167,12 +171,6 @@
       <DependentUpon>ScreenForm.cs</DependentUpon>
     </Compile>
     <Compile Include="LxzhClass\HotKey.cs" />
-    <Compile Include="LxzhView\MainForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="LxzhView\MainForm.Designer.cs">
-      <DependentUpon>MainForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="LxzhClass\IniFile.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -220,17 +218,13 @@
       <DependentUpon>LxzhScrollBar.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="LxzhView\MainForm.resx">
-      <DependentUpon>MainForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="LxzhView\SettingForm.resx">
-      <DependentUpon>SettingForm.cs</DependentUpon>
+    <EmbeddedResource Include="LxzhView\MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="LxzhControl\LxzhTextInput.resx">
@@ -260,11 +254,11 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="LxzhClass\RegistryUtil.cs" />
-    <Compile Include="LxzhView\SettingForm.cs">
+    <Compile Include="LxzhView\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="LxzhView\SettingForm.Designer.cs">
-      <DependentUpon>SettingForm.cs</DependentUpon>
+    <Compile Include="LxzhView\MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="LxzhView\Toast.cs">
       <SubType>Form</SubType>
@@ -277,7 +271,6 @@
   <ItemGroup>
     <Content Include="Resources\ass.ico" />
     <None Include="bin\Debug\config.ini" />
-    <None Include="Resources\config.ini" />
     <None Include="Resources\exit.ico" />
     <None Include="Resources\arrow.png" />
     <None Include="Resources\brush.png" />

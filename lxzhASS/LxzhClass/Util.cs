@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 using System.Drawing;
+using System.IO;
 
 namespace lxzh
 {
@@ -24,66 +25,16 @@ namespace lxzh
         /// 设置-开机自启字段
         /// </summary>
         public static string START_ON_POWER_ON = "autorun";
-        #region HOTKEY_WHOLE
-        /// <summary>
-        /// 设置-全屏截图字段
-        /// </summary>
-        //public static string HOTKEY_WHOLE = "hotkey_whole";
-        /// <summary>
-        /// 全屏截图快捷键ID
-        /// </summary>
-        public const int HOTKEY_WHOLE_ID = 100;
-        /// <summary>
-        /// 默认全屏截图快捷键
-        /// </summary>
-        public static string DEFAULT_HOTKEY_WHOLE = "Win+S";
-        #endregion
+
         public static KeyModel HOTKEY_WHOLE = new KeyModel("hotkey_whole","全屏截图", "Win+S", "S", 100);
-        #region HOTKEY_ACTIVE
-        /// <summary>
-        /// 设置-活动窗体截图字段
-        /// </summary>
-        //public static string HOTKEY_ACTIVE = "hotkey_active";
-        /// <summary>
-        /// 活动窗体截图快捷键ID
-        /// </summary>
-        public const int HOTKEY_ACTIVE_ID = 101;
-        /// <summary>
-        /// 默认活动窗体截图快捷键
-        /// </summary>
-        public static string DEFAULT_HOTKEY_ACTIVE = "Alt+S";
-        #endregion 
-        public static KeyModel HOTKEY_ACTIVE = new KeyModel("hotkey_active", "", "Alt+S", "S", 101);
-        #region HOTKEY_FREE
-        /// <summary>
-        /// 设置-自由截图字段
-        /// </summary>
-        //public static string HOTKEY_FREE = "hotkey_free";
-        /// <summary>
-        /// 自由截图快捷键ID
-        /// </summary>
-        public const int HOTKEY_FREE_ID = 102;
-        /// <summary>
-        /// 默认自由截图快捷键
-        /// </summary>
-        public static string DEFAULT_HOTKEY_FREE = "Ctrl+Alt+A";
-        #endregion 
-        public static KeyModel HOTKEY_FREE = new KeyModel("hotkey_free", "", "Ctrl+Alt+A", "A", 102);
-        #region HOTKEY_LAST
-        /// <summary>
-        /// 设置-重复上次位置截图字段
-        /// </summary>
-        //public static string HOTKEY_LAST = "hotkey_last";
-        /// <summary>
-        /// 重复上次位置截图快捷键ID
-        /// </summary>
-        public const int HOTKEY_LAST_ID = 103;
-        /// <summary>
-        /// 默认重复上次位置截图快捷键
-        /// </summary>
-        public static string DEFAULT_HOTKEY_LAST = "Ctrl+Alt+L";
-        #endregion 
-        public static KeyModel HOTKEY_LAST = new KeyModel("hotkey_last", "", "Ctrl+Alt+L", "L", 103);
+
+        public static KeyModel HOTKEY_ACTIVE = new KeyModel("hotkey_active", "活动窗体截图", "Alt+S", "S", 101);
+
+        public static KeyModel HOTKEY_FREE = new KeyModel("hotkey_free", "自由截图", "Ctrl+Alt+A", "A", 102);
+
+        public static KeyModel HOTKEY_LAST = new KeyModel("hotkey_last", "重复上次选框截图", "Ctrl+Alt+L", "L", 103);
+
+        public static KeyModel HOTKEY_CLIP = new KeyModel("hotkey_clip", "从剪切板截图", "Ctrl+Shift+C", "C", 104);
         /// <summary>
         /// 字母按键个数
         /// </summary>
@@ -180,6 +131,32 @@ namespace lxzh
             object o = frm.GetType().GetField(name, System.Reflection.BindingFlags.NonPublic |
                 System.Reflection.BindingFlags.Instance).GetValue(frm);
             return o;
+        }
+        /// <summary>
+        /// 保存时获取当前时间字符串作为默认文件名
+        /// </summary>
+        /// <returns>当前时间字符串文件名</returns>
+        public static string GetSavePicPath() {
+            string path = IniFile.ReadIniData(Util.CONFIG_SECTION, Util.SAVE_PIC_PATH, Util.DEFAULT_SAVE_PIC_PATH);
+            string extention = IniFile.ReadIniData(Util.CONFIG_SECTION, Util.SAVE_FILE_EXTENSION, Util.DEFAULT_FILE_EXTENSION);
+            if (string.IsNullOrEmpty(path))
+                path = Util.DEFAULT_SAVE_PIC_PATH;
+            if (string.IsNullOrEmpty(extention))
+                extention = Util.DEFAULT_FILE_EXTENSION;
+            if (!Directory.Exists(path))
+                CreateDeepFolder(path);
+            return string.Format("{0}\\{1}.{2}", path, DateTime.Now.ToString("yyyyMMdd HHmmss"), extention);
+        }
+
+        private static bool CreateDeepFolder(string path) {
+            bool result;
+            DirectoryInfo di = new DirectoryInfo(path);
+            if (!di.Parent.Exists) {
+                result = CreateDeepFolder(di.Parent.FullName);
+            }
+            di.Create();
+            result = true;
+            return result;
         }
     }
 

@@ -99,7 +99,7 @@
             this.btnOut.Size = new System.Drawing.Size(22, 22);
             this.btnOut.TabIndex = 11;
             this.btnOut.TipText = "桌面显示";
-            this.btnOut.Click += new System.EventHandler(this.tBtn_Out_Click);
+            this.btnOut.Click += new System.EventHandler(this.btnSticky_Click);
             // 
             // btnFinish
             // 
@@ -141,7 +141,7 @@
             this.btnSave.Size = new System.Drawing.Size(22, 22);
             this.btnSave.TabIndex = 6;
             this.btnSave.TipText = "保存Ctrl+S";
-            this.btnSave.Click += new System.EventHandler(this.tBtn_Save_Click);
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // btnReset
             // 
@@ -155,7 +155,7 @@
             this.btnReset.Size = new System.Drawing.Size(22, 22);
             this.btnReset.TabIndex = 5;
             this.btnReset.TipText = "撤销编辑Ctrl+Z";
-            this.btnReset.Click += new System.EventHandler(this.tBtn_Reset_Click);
+            this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
             // 
             // btnText
             // 
@@ -346,7 +346,7 @@
             this.imageProcessBox.Location = new System.Drawing.Point(0, 0);
             this.imageProcessBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.imageProcessBox.Name = "imageProcessBox";
-            this.imageProcessBox.SelectedRect = new System.Drawing.Rectangle(-100, -100, 7, 7);
+            this.imageProcessBox.SelectedRect = new System.Drawing.Rectangle(-100, -100, 8, 8);
             this.imageProcessBox.Size = new System.Drawing.Size(484, 309);
             this.imageProcessBox.TabIndex = 0;
             this.imageProcessBox.Text = "imageProcessBox";
@@ -373,9 +373,8 @@
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.Text = "FrmCapture";
-            this.TopMost = true;
-            this.Load += new System.EventHandler(this.FrmCapture_Load);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmCapture_KeyDown);
+            this.Load += new System.EventHandler(this.CaptureForm_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.CaptureForm_KeyDown);
             this.plTool.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.plColorBox.ResumeLayout(false);
