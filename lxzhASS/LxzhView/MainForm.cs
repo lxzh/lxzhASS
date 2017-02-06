@@ -3,7 +3,6 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.IO;
-using lxzh.IBASadd;
 
 namespace lxzh
 {
@@ -24,6 +23,9 @@ namespace lxzh
 
         private LCheckBox[][] chkHotkeys;
         private LComboBox[] cbbHotkeys;
+
+        private Point mouseOff = new Point();
+        private bool leftFlag = false;
 
         public MainForm() {
             InitializeComponent();
@@ -100,10 +102,32 @@ namespace lxzh
             btnCancle.Click += (s, e) => { btnCancelClick(); };
         }
 
-        private void MainForm_Load(object sender, EventArgs e) {
+        private void MainForm_Load(object sender_, EventArgs e_) {
             //增加透明和可移动
-            FormExt.AddMoveEvent(this);
-            FormExt.TransparentForm(this);
+            #region 增加透明
+            this.BackColor = Color.FromArgb(116, 253, 107);
+            this.Opacity = 0.8;
+            #endregion
+            #region 增加移动
+            this.MouseDown += (sender, e) => {
+                if (e.Button == MouseButtons.Left) {
+                    mouseOff = new Point(-e.X, -e.Y);
+                    leftFlag = true;
+                }
+            };
+            this.MouseMove += (sender, e) => {
+                if (leftFlag) {
+                    Point mouseSet = Control.MousePosition;
+                    mouseSet.Offset(mouseOff.X, mouseOff.Y);  //calculate the last point
+                    ((ContainerControl)sender).Location = mouseSet;
+                }
+            };
+            this.MouseUp += (sender, e) => {
+                if (leftFlag) {
+                    leftFlag = false;
+                }
+            };
+            #endregion
             this.Hide();
             IniFile.initConfigFile();
             if (!registHotKey()) {
