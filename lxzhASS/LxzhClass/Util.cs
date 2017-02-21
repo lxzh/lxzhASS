@@ -25,16 +25,30 @@ namespace lxzh
         /// 设置-开机自启字段
         /// </summary>
         public static string START_ON_POWER_ON = "autorun";
+        
+        public static KeyModel HOTKEY_WHOLE = new KeyModel("hotkey_whole", "全屏截图", "Ctrl+G", "G", 100);
 
-        public static KeyModel HOTKEY_WHOLE = new KeyModel("hotkey_whole","全屏截图", "Win+S", "S", 100);
+        public static KeyModel HOTKEY_ACTIVE = new KeyModel("hotkey_active", "活动窗体截图", "Ctrl+D", "D", 101);
 
-        public static KeyModel HOTKEY_ACTIVE = new KeyModel("hotkey_active", "活动窗体截图", "Alt+S", "S", 101);
-
-        public static KeyModel HOTKEY_FREE = new KeyModel("hotkey_free", "自由截图", "Ctrl+Alt+A", "A", 102);
+        public static KeyModel HOTKEY_FREE = new KeyModel("hotkey_free", "自由截图", "Shift+D", "D", 102);
 
         public static KeyModel HOTKEY_LAST = new KeyModel("hotkey_last", "重复上次选框截图", "Ctrl+Alt+L", "L", 103);
 
-        public static KeyModel HOTKEY_CLIP = new KeyModel("hotkey_clip", "从剪切板截图", "Ctrl+Shift+C", "C", 104);
+        public static KeyModel HOTKEY_CLIP = new KeyModel("hotkey_clip", "从剪切板截图", "Ctrl+Shift+E", "E", 104);
+
+        public static KeyModel HOTKEY_EXIT = new KeyModel("hotkey_exit", "退出程序", "Ctrl+Alt+H", "H", 105);
+
+        //public static KeyModel HOTKEY_WHOLE = new KeyModel("hotkey_whole", "全屏截图", "Ctrl+G", "G", 100);
+
+        //public static KeyModel HOTKEY_ACTIVE = new KeyModel("hotkey_active", "活动窗体截图", "Alt+S", "S", 101);
+
+        //public static KeyModel HOTKEY_FREE = new KeyModel("hotkey_free", "自由截图", "Ctrl+Alt+A", "A", 102);
+
+        //public static KeyModel HOTKEY_LAST = new KeyModel("hotkey_last", "重复上次选框截图", "Ctrl+Alt+L", "L", 103);
+
+        //public static KeyModel HOTKEY_CLIP = new KeyModel("hotkey_clip", "从剪切板截图", "Ctrl+Shift+C", "C", 104);
+
+        //public static KeyModel HOTKEY_EXIT = new KeyModel("hotkey_exit", "退出程序", "Ctrl+Shift+E", "E", 105);
         /// <summary>
         /// 字母按键个数
         /// </summary>

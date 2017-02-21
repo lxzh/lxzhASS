@@ -1,16 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using System.IO;
-using System.Text.RegularExpressions;
-using System.Threading;
 
-namespace lxzh {
+namespace lxzh
+{
     public partial class MainForm : Form {
         private string[] extensions;
         private string[] keys;
@@ -29,6 +24,9 @@ namespace lxzh {
         private LCheckBox[][] chkHotkeys;
         private LComboBox[] cbbHotkeys;
 
+        private Point mouseOff = new Point();
+        private bool leftFlag = false;
+
         public MainForm() {
             InitializeComponent();
             initControlArray();
@@ -39,8 +37,8 @@ namespace lxzh {
         /// 初始化控件数组
         /// </summary>
         private void initControlArray() {
-            chkHotkeys = new LCheckBox[5][];
-            cbbHotkeys = new LComboBox[5];
+            chkHotkeys = new LCheckBox[6][];
+            cbbHotkeys = new LComboBox[6];
 
             chkHotkeys[0] = new LCheckBox[4];
             chkHotkeys[0][0] = chkCtrl1;
@@ -76,6 +74,13 @@ namespace lxzh {
             chkHotkeys[4][2] = chkAlt5;
             chkHotkeys[4][3] = chkWin5;
             cbbHotkeys[4] = cbbKeys5;
+
+            chkHotkeys[5] = new LCheckBox[4];
+            chkHotkeys[5][0] = chkCtrl6;
+            chkHotkeys[5][1] = chkShift6;
+            chkHotkeys[5][2] = chkAlt6;
+            chkHotkeys[5][3] = chkWin6;
+            cbbHotkeys[5] = cbbKeys6;
         }
 
         private void initParams() {
@@ -89,14 +94,40 @@ namespace lxzh {
             cbbKeys1.Items.AddRange(keys);
             cbbKeys2.Items.AddRange(keys);
             cbbKeys3.Items.AddRange(keys);
-            cbbKeys4.Items.AddRange(keys); 
+            cbbKeys4.Items.AddRange(keys);
             cbbKeys5.Items.AddRange(keys);
+            cbbKeys6.Items.AddRange(keys);
             btnScan.Click += (s, e) => { ScanFolder(); };
             btnScan.Click += (s, e) => { btnSaveClick(); };
             btnCancle.Click += (s, e) => { btnCancelClick(); };
         }
 
-        private void MainForm_Load(object sender, EventArgs e) {
+        private void MainForm_Load(object sender_, EventArgs e_) {
+            //增加透明和可移动
+            #region 增加透明
+            this.BackColor = Color.FromArgb(116, 253, 107);
+            this.Opacity = 0.8;
+            #endregion
+            #region 增加移动
+            this.MouseDown += (sender, e) => {
+                if (e.Button == MouseButtons.Left) {
+                    mouseOff = new Point(-e.X, -e.Y);
+                    leftFlag = true;
+                }
+            };
+            this.MouseMove += (sender, e) => {
+                if (leftFlag) {
+                    Point mouseSet = Control.MousePosition;
+                    mouseSet.Offset(mouseOff.X, mouseOff.Y);  //calculate the last point
+                    ((ContainerControl)sender).Location = mouseSet;
+                }
+            };
+            this.MouseUp += (sender, e) => {
+                if (leftFlag) {
+                    leftFlag = false;
+                }
+            };
+            #endregion
             this.Hide();
             IniFile.initConfigFile();
             if (!registHotKey()) {
@@ -194,6 +225,14 @@ namespace lxzh {
             chkShift5.OriState = chkShift5.Checked = hotKeyValue[2] == 1;
             chkWin5.OriState = chkWin5.Checked = hotKeyValue[3] == 1;
             cbbKeys5.OriIndex = cbbKeys5.SelectedIndex = hotKeyValue[4];
+
+            Util.HOTKEY_EXIT.IsValueChanged = false;
+            hotKeyValue = HotKey.getHotkeyFromIni(Util.HOTKEY_EXIT);
+            chkAlt6.OriState = chkAlt6.Checked = hotKeyValue[0] == 1;
+            chkCtrl6.OriState = chkCtrl6.Checked = hotKeyValue[1] == 1;
+            chkShift6.OriState = chkShift6.Checked = hotKeyValue[2] == 1;
+            chkWin6.OriState = chkWin6.Checked = hotKeyValue[3] == 1;
+            cbbKeys6.OriIndex = cbbKeys6.SelectedIndex = hotKeyValue[4];
             #endregion
 
         }
@@ -204,7 +243,8 @@ namespace lxzh {
             bool result3 = HotKey.RegisteHotkeyFromIni(Handle, Util.HOTKEY_FREE);
             bool result4 = HotKey.RegisteHotkeyFromIni(Handle, Util.HOTKEY_LAST);
             bool result5 = HotKey.RegisteHotkeyFromIni(Handle, Util.HOTKEY_CLIP);
-            return (result1 && result2 && result3 && result4 && result5);
+            bool result6 = HotKey.RegisteHotkeyFromIni(Handle, Util.HOTKEY_EXIT);
+            return (result1 && result2 && result3 && result4 && result5 && result6);
         }
 
         private void ScanFolder() {
@@ -272,8 +312,12 @@ namespace lxzh {
                         StartCapture(false);
                     } else if (keyid == Util.HOTKEY_LAST.KeyId) {
                         SaveScreen(keyid);
-                    } else if (keyid == Util.HOTKEY_CLIP.KeyId) {
+                    } else if (keyid == Util.HOTKEY_CLIP.KeyId)
+                    {
                         StartCapture(true);
+                    } else if (keyid == Util.HOTKEY_EXIT.KeyId)
+                    {
+                        Close();
                     }
                     break;
             }
@@ -347,6 +391,11 @@ namespace lxzh {
                     new Toast(1, "请至少选择一个辅助键(Ctrl/Alt/Shift/Win)！").Show();
                     return false;
                 }
+                if (!Util.HOTKEY_EXIT.setHotkey(new bool[] { chkAlt6.Checked, chkCtrl6.Checked, chkShift6.Checked, chkWin6.Checked }, cbbKeys6.SelectedIndex)) {
+                    cbbKeys6.Select();
+                    new Toast(1, "请至少选择一个辅助键(Ctrl/Alt/Shift/Win)！").Show();
+                    return false;
+                }
                 #endregion
                 if (!checkHotkeyConflit()) {
                     return false;
@@ -371,6 +420,11 @@ namespace lxzh {
                 if (Util.HOTKEY_CLIP.RegistedHotkey != Util.HOTKEY_CLIP.Hotkey) {
                     IniFile.WriteIniData(Util.CONFIG_SECTION, Util.HOTKEY_CLIP.KeyName, Util.HOTKEY_CLIP.Hotkey);
                     result &= HotKey.RegisteSetHotkey(Program.mainForm.Handle, Util.HOTKEY_CLIP);
+                }
+                if (Util.HOTKEY_EXIT.RegistedHotkey != Util.HOTKEY_EXIT.Hotkey)
+                {
+                    IniFile.WriteIniData(Util.CONFIG_SECTION, Util.HOTKEY_EXIT.KeyName, Util.HOTKEY_EXIT.Hotkey);
+                    result &= HotKey.RegisteSetHotkey(Program.mainForm.Handle, Util.HOTKEY_EXIT);
                 }
                 if (!result) {
                     new Toast(2, "保存失败，请检查是否有快捷键和其他应用程序存在冲突").Show();
@@ -408,7 +462,7 @@ namespace lxzh {
         private bool checkChanged() {
             bool result = txtSavePath.IsValueChanged || cbbExtension.IsValueChanged || chkSPO.IsStateChanged;
             if (!result) {
-                for (int i = 0; i < 5; i++) {
+                for (int i = 0; i < 6; i++) {
                     for (int j = 0; j < 4; j++) {
                         result |= chkHotkeys[i][j].IsStateChanged;
                     }
@@ -422,7 +476,7 @@ namespace lxzh {
         /// </summary>
         /// <returns></returns>
         private bool checkHotkeyConflit() {
-            string[] hotkeys = new string[] { Util.HOTKEY_WHOLE.Hotkey, Util.HOTKEY_ACTIVE.Hotkey, Util.HOTKEY_FREE.Hotkey, Util.HOTKEY_LAST.Hotkey };
+            string[] hotkeys = new string[] { Util.HOTKEY_WHOLE.Hotkey, Util.HOTKEY_ACTIVE.Hotkey, Util.HOTKEY_FREE.Hotkey, Util.HOTKEY_LAST.Hotkey ,Util.HOTKEY_EXIT.Hotkey};
             for (int i = 0; i < 4; i++) {
                 for (int j = i + 1; j < 5; j++) {
                     if (hotkeys[j] == hotkeys[i]) {
@@ -436,6 +490,31 @@ namespace lxzh {
                 }
             }
             return true;
+        }
+
+        private void lbl1_Click(object sender, EventArgs e)
+        {
+            new Toast(3, "截取当前屏幕，并将结果放置在剪贴板中").ShowDialog();
+        }
+
+        private void lbl2_Click(object sender, EventArgs e)
+        {
+            new Toast(3, "截取当前屏幕中的活动程序，并将结果放置在剪贴板中").ShowDialog();
+        }
+
+        private void lbl3_Click(object sender, EventArgs e)
+        {
+            new Toast(2, "普通意义上的截图").ShowDialog();
+        }
+
+        private void lbl4_Click(object sender, EventArgs e)
+        {
+            new Toast(3, "在上一次截图的位置继续截取图片并放置到剪贴板中").ShowDialog();
+        }
+
+        private void lxzhTipLabel1_Click(object sender, EventArgs e)
+        {
+            new Toast(3, "将剪贴板中的图像放置在屏幕顶层予以截图").ShowDialog();
         }
     }
 }
