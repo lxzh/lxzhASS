@@ -57,7 +57,6 @@ namespace lxzh
             //Toast toast = new Toast(2, string.Format("已截图保存至：\n{0}", filename));
             //toast.StartPos = ContentAlignment.BottomRight;
             //toast.Show();
-            this.Close();
         }
 
         private Rectangle getFormInfo(Rectangle rect) {

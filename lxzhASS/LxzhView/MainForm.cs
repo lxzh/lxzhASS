@@ -358,6 +358,7 @@ namespace lxzh {
         private void SaveScreen(int hotkeyId) {
             ScreenForm sf = new ScreenForm(hotkeyId);
             sf.Show();
+            sf.Close();
         }
         //启动截图
         public void StartCapture(bool fromClip) {
