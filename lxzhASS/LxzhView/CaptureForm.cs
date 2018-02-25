@@ -24,6 +24,10 @@ namespace lxzh
         private Bitmap bmpLayerCurrent;
         private Bitmap bmpLayerShow;
         private Cursor crossCursor;
+        public static bool isAlive = false;
+
+        private static int maxHeight = 0;
+        private static int maxWidth = 0;
 
         #region Properties
 
@@ -83,7 +87,32 @@ namespace lxzh
         public CaptureForm() {
             InitializeComponent();
             this.Location = new Point(0, 0);
-            this.Size = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
+
+            //获取屏幕放大比例
+            Graphics graphics = this.CreateGraphics(); 
+            int dpiX = (int)graphics.DpiX;
+            int dpiY = (int)graphics.DpiY;
+            float scaling=1.0f;
+            if(dpiX==96){
+                scaling=1.0F;
+            }else if(dpiX==120){
+                scaling=1.25F;
+            }else if(dpiX==144){
+                scaling=1.5F;
+            }else if(dpiX==192){
+                scaling=2.0F;
+            }else{
+
+            }
+
+            foreach (Screen screen in Screen.AllScreens) {
+                maxWidth += screen.Bounds.Width;
+                if (screen.Bounds.Height > maxHeight) {
+                    maxHeight = screen.Bounds.Height;
+                }
+            }
+            this.Location = Point.Empty;
+            this.Size = new Size(maxWidth, maxHeight);
 
             mHook = new MouseHook();
             this.FormClosing += (s, e) => { mHook.UnLoadHook(); this.DelResource(); };
@@ -125,6 +154,7 @@ namespace lxzh
 
         private void CaptureForm_Load(object sender, EventArgs e) {
             this.InitMember();
+
             imageProcessBox.BaseImage = CaptureForm.GetScreen(this.isCaptureCursor,this.isFromClipBoard);
             mHook.SetHook();
             mHook.MHookEvent += new MouseHook.MHookEventHandler(mHook_MHookEvent);
@@ -138,7 +168,7 @@ namespace lxzh
             //BindingFlags.SetField, null, crossCursor,
             //new object[] { customCursorHandle });
             crossCursor = new Cursor(global::lxzh.Properties.Resources.cross.GetHicon());
-
+            isAlive = true;
             //timer1.Interval = 500;
             //timer1.Enabled = true;
         }
@@ -624,7 +654,7 @@ namespace lxzh
         }
         //获取桌面图像
         private static Bitmap GetScreen(bool bCaptureCursor, bool bFromClipBoard) {
-            Bitmap bmp = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
+            Bitmap bmp = new Bitmap(maxWidth, maxHeight);
             if (bCaptureCursor)      //是否捕获鼠标
                 DrawCurToScreen();
 
@@ -659,7 +689,7 @@ namespace lxzh
                 if (pci.hCursor != IntPtr.Zero) {
                     Cursor cur = new Cursor(pci.hCursor);
                     Rectangle rectCur = new Rectangle((Point)((Size)MousePosition - (Size)cur.HotSpot), cur.Size);
-                    g.CopyFromScreen(0, 0, 0, 0, Screen.PrimaryScreen.Bounds.Size);
+                    g.CopyFromScreen(0, 0, 0, 0, new Size(maxWidth,maxHeight));
                     //g.CopyFromScreen(rect_cur.Location, rect_cur.Location, rect_cur.Size); //在桌面绘制鼠标前 先在桌面绘制一下当前的桌面图像
                     //如果不绘制当前桌面 那么cur.Draw的时候会是用历史桌面的快照 进行鼠标的混合 那么到时候混出现底色(测试中就是这样的)
                     cur.Draw(g, rectCur);
@@ -712,6 +742,10 @@ namespace lxzh
             }
             Bitmap bmpTemp = bmpLayerCurrent.Clone() as Bitmap;
             historyLayer.Add(bmpTemp);
+        }
+
+        private void CaptureForm_FormClosed(object sender, FormClosedEventArgs e) {
+            isAlive = false;
         }
     }
 }

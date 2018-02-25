@@ -51,68 +51,68 @@
             this.tsmiHelp,
             this.tsmiClose});
             this.contextMenuStrip.Name = "contextMenuStrip1";
-            this.contextMenuStrip.Size = new System.Drawing.Size(214, 182);
+            this.contextMenuStrip.Size = new System.Drawing.Size(185, 148);
             // 
             // tsmiOTC
             // 
             this.tsmiOTC.Name = "tsmiOTC";
-            this.tsmiOTC.Size = new System.Drawing.Size(213, 24);
+            this.tsmiOTC.Size = new System.Drawing.Size(184, 22);
             this.tsmiOTC.Text = "保存原始图到剪切板";
             this.tsmiOTC.Click += new System.EventHandler(this.tsmiOTC_Click);
             // 
             // tsmiCTC
             // 
             this.tsmiCTC.Name = "tsmiCTC";
-            this.tsmiCTC.Size = new System.Drawing.Size(213, 24);
+            this.tsmiCTC.Size = new System.Drawing.Size(184, 22);
             this.tsmiCTC.Text = "保存当前图到剪切板";
             this.tsmiCTC.Click += new System.EventHandler(this.tsmiCTC_Click);
             // 
             // tss1
             // 
             this.tss1.Name = "tss1";
-            this.tss1.Size = new System.Drawing.Size(210, 6);
+            this.tss1.Size = new System.Drawing.Size(181, 6);
             // 
             // tsmiSO
             // 
             this.tsmiSO.Name = "tsmiSO";
-            this.tsmiSO.Size = new System.Drawing.Size(213, 24);
+            this.tsmiSO.Size = new System.Drawing.Size(184, 22);
             this.tsmiSO.Text = "保存原始图";
             this.tsmiSO.Click += new System.EventHandler(this.tsmiSaveOriginal_Click);
             // 
             // tsmiSC
             // 
             this.tsmiSC.Name = "tsmiSC";
-            this.tsmiSC.Size = new System.Drawing.Size(213, 24);
+            this.tsmiSC.Size = new System.Drawing.Size(184, 22);
             this.tsmiSC.Text = "保存当前图";
             this.tsmiSC.Click += new System.EventHandler(this.tsmiSaveCurrent_Click);
             // 
             // tss2
             // 
             this.tss2.Name = "tss2";
-            this.tss2.Size = new System.Drawing.Size(210, 6);
+            this.tss2.Size = new System.Drawing.Size(181, 6);
             // 
             // tsmiHelp
             // 
             this.tsmiHelp.Name = "tsmiHelp";
-            this.tsmiHelp.Size = new System.Drawing.Size(213, 24);
+            this.tsmiHelp.Size = new System.Drawing.Size(184, 22);
             this.tsmiHelp.Text = "帮助";
             this.tsmiHelp.Click += new System.EventHandler(this.tsmiHelp_Click);
             // 
             // tsmiClose
             // 
             this.tsmiClose.Name = "tsmiClose";
-            this.tsmiClose.Size = new System.Drawing.Size(213, 24);
+            this.tsmiClose.Size = new System.Drawing.Size(184, 22);
             this.tsmiClose.Text = "关闭";
             this.tsmiClose.Click += new System.EventHandler(this.tsmiClose_Click);
             // 
             // StickyForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(387, 309);
+            this.ClientSize = new System.Drawing.Size(5, 5);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "StickyForm";
             this.TopMost = true;
             this.contextMenuStrip.ResumeLayout(false);

@@ -1,17 +1,21 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using System.Text.RegularExpressions;
+using System.Threading;
 
-namespace lxzh
-{
+namespace lxzh {
     public partial class MainForm : Form {
         private string[] extensions;
         private string[] keys;
 
         private bool isSettingChanged = false;
-        private bool isSaved = false;
 
         public bool IsSettingChanged {
             get { return isSettingChanged; }
@@ -21,9 +25,14 @@ namespace lxzh
             }
         }
 
+        private bool isSaved = false;
+        public static bool isAlive = false;
+
         private LCheckBox[][] chkHotkeys;
         private LComboBox[] cbbHotkeys;
-
+        private KeyModel[] hotKeys;
+        private const int hotKeyCount = 7;
+		
         private Point mouseOff = new Point();
         private bool leftFlag = false;
 
@@ -37,8 +46,9 @@ namespace lxzh
         /// 初始化控件数组
         /// </summary>
         private void initControlArray() {
-            chkHotkeys = new LCheckBox[6][];
-            cbbHotkeys = new LComboBox[6];
+            chkHotkeys = new LCheckBox[hotKeyCount][];
+            cbbHotkeys = new LComboBox[hotKeyCount];
+            hotKeys = new KeyModel[] { Util.HOTKEY_WHOLE, Util.HOTKEY_ACTIVE, Util.HOTKEY_FREE, Util.HOTKEY_LAST, Util.HOTKEY_CLIP, Util.HOTKEY_TXTPIN, Util.HOTKEY_EXIT };
 
             chkHotkeys[0] = new LCheckBox[4];
             chkHotkeys[0][0] = chkCtrl1;
@@ -81,6 +91,13 @@ namespace lxzh
             chkHotkeys[5][2] = chkAlt6;
             chkHotkeys[5][3] = chkWin6;
             cbbHotkeys[5] = cbbKeys6;
+
+            chkHotkeys[6] = new LCheckBox[4];
+            chkHotkeys[6][0] = chkCtrl7;
+            chkHotkeys[6][1] = chkShift7;
+            chkHotkeys[6][2] = chkAlt7;
+            chkHotkeys[6][3] = chkWin7;
+            cbbHotkeys[6] = cbbKeys7;
         }
 
         private void initParams() {
@@ -97,15 +114,15 @@ namespace lxzh
             cbbKeys4.Items.AddRange(keys);
             cbbKeys5.Items.AddRange(keys);
             cbbKeys6.Items.AddRange(keys);
+            cbbKeys7.Items.AddRange(keys);
             btnScan.Click += (s, e) => { ScanFolder(); };
-            btnScan.Click += (s, e) => { btnSaveClick(); };
+            btnSave.Click += (s, e) => { btnSaveClick(); };
             btnCancle.Click += (s, e) => { btnCancelClick(); };
         }
 
         private void MainForm_Load(object sender_, EventArgs e_) {
             //增加透明和可移动
             #region 增加透明
-            this.BackColor = Color.FromArgb(116, 253, 107);
             this.Opacity = 0.8;
             #endregion
             #region 增加移动
@@ -226,25 +243,31 @@ namespace lxzh
             chkWin5.OriState = chkWin5.Checked = hotKeyValue[3] == 1;
             cbbKeys5.OriIndex = cbbKeys5.SelectedIndex = hotKeyValue[4];
 
-            Util.HOTKEY_EXIT.IsValueChanged = false;
-            hotKeyValue = HotKey.getHotkeyFromIni(Util.HOTKEY_EXIT);
+            Util.HOTKEY_TXTPIN.IsValueChanged = false;
+            hotKeyValue = HotKey.getHotkeyFromIni(Util.HOTKEY_TXTPIN);
             chkAlt6.OriState = chkAlt6.Checked = hotKeyValue[0] == 1;
             chkCtrl6.OriState = chkCtrl6.Checked = hotKeyValue[1] == 1;
             chkShift6.OriState = chkShift6.Checked = hotKeyValue[2] == 1;
             chkWin6.OriState = chkWin6.Checked = hotKeyValue[3] == 1;
             cbbKeys6.OriIndex = cbbKeys6.SelectedIndex = hotKeyValue[4];
+			
+			Util.HOTKEY_EXIT.IsValueChanged = false;
+            hotKeyValue = HotKey.getHotkeyFromIni(Util.HOTKEY_EXIT);
+            chkAlt7.OriState = chkAlt7.Checked = hotKeyValue[0] == 1;
+            chkCtrl7.OriState = chkCtrl7.Checked = hotKeyValue[1] == 1;
+            chkShift7.OriState = chkShift7.Checked = hotKeyValue[2] == 1;
+            chkWin7.OriState = chkWin7.Checked = hotKeyValue[3] == 1;
+            cbbKeys7.OriIndex = cbbKeys7.SelectedIndex = hotKeyValue[4];
             #endregion
 
         }
 
         private bool registHotKey() {
-            bool result1 = HotKey.RegisteHotkeyFromIni(Handle, Util.HOTKEY_WHOLE);
-            bool result2 = HotKey.RegisteHotkeyFromIni(Handle, Util.HOTKEY_ACTIVE);
-            bool result3 = HotKey.RegisteHotkeyFromIni(Handle, Util.HOTKEY_FREE);
-            bool result4 = HotKey.RegisteHotkeyFromIni(Handle, Util.HOTKEY_LAST);
-            bool result5 = HotKey.RegisteHotkeyFromIni(Handle, Util.HOTKEY_CLIP);
-            bool result6 = HotKey.RegisteHotkeyFromIni(Handle, Util.HOTKEY_EXIT);
-            return (result1 && result2 && result3 && result4 && result5 && result6);
+            bool result = true;
+            for (int i = 0; i < hotKeyCount; i++) {
+                result = result && HotKey.RegisteHotkeyFromIni(Handle,hotKeys[i]);
+            }
+            return result;
         }
 
         private void ScanFolder() {
@@ -312,11 +335,11 @@ namespace lxzh
                         StartCapture(false);
                     } else if (keyid == Util.HOTKEY_LAST.KeyId) {
                         SaveScreen(keyid);
-                    } else if (keyid == Util.HOTKEY_CLIP.KeyId)
-                    {
+                    } else if (keyid == Util.HOTKEY_CLIP.KeyId) {
                         StartCapture(true);
-                    } else if (keyid == Util.HOTKEY_EXIT.KeyId)
-                    {
+                    } else if (keyid == Util.HOTKEY_TXTPIN.KeyId) {
+                        StartPinCode(Clipboard.ContainsText());
+                    } else if (keyid == Util.HOTKEY_EXIT.KeyId) {
                         Close();
                     }
                     break;
@@ -324,15 +347,38 @@ namespace lxzh
             base.WndProc(ref m);
         }
 
+        protected override void DefWndProc(ref Message m) {
+            if (m.Msg == 0x104) {
+                StartCapture(false);
+                return; 
+            } else { } 
+            base.DefWndProc(ref m); 
+        }
+
         private void SaveScreen(int hotkeyId) {
-            new ScreenForm(hotkeyId).Show();
+            ScreenForm sf = new ScreenForm(hotkeyId);
+            sf.Show();
         }
         //启动截图
-        public static void StartCapture(bool fromClip) {
+        public void StartCapture(bool fromClip) {
             CaptureForm capture = new CaptureForm();
-            capture.IsCaptureCursor = false;
-            capture.IsFromClipBoard = fromClip;
-            capture.Show();
+            try {
+                if (!CaptureForm.isAlive) {
+                    capture.IsCaptureCursor = false;
+                    capture.IsFromClipBoard = fromClip;
+                    capture.Show();
+                }
+            } catch (Exception ex) {
+                Console.WriteLine(ex.ToString());
+            }
+        }
+
+        public void StartPinCode(bool fromClip) {
+            PinForm pin = new PinForm();
+            if (fromClip) {
+                pin.CodeTxt = Clipboard.GetText();
+            }
+            pin.Show();
         }
 
         /// <summary>
@@ -366,66 +412,26 @@ namespace lxzh
 
                 IniFile.WriteIniData(Util.CONFIG_SECTION, Util.SAVE_PIC_PATH, txtSavePath.Text);
 
-                if (!Util.HOTKEY_WHOLE.setHotkey(new bool[] { chkAlt1.Checked, chkCtrl1.Checked, chkShift1.Checked, chkWin1.Checked }, cbbKeys1.SelectedIndex)) {
-                    cbbKeys1.Select();
-                    new Toast(1, "请至少选择一个辅助键(Ctrl/Alt/Shift/Win)！").Show();
-                    return false;
+                for (int i = 0; i < hotKeyCount; i++) {
+                    if (!hotKeys[i].setHotkey(new bool[] { chkHotkeys[i][0].Checked, chkHotkeys[i][1].Checked, chkHotkeys[i][2].Checked, chkHotkeys[i][3].Checked }, cbbHotkeys[i].SelectedIndex)) {
+                        cbbHotkeys[i].Select();
+                        new Toast(1, "请至少选择一个辅助键(Ctrl/Alt/Shift/Win)！").Show();
+                        return false;
+                    }
                 }
-                if (!Util.HOTKEY_ACTIVE.setHotkey(new bool[] { chkAlt2.Checked, chkCtrl2.Checked, chkShift2.Checked, chkWin2.Checked }, cbbKeys2.SelectedIndex)) {
-                    cbbKeys2.Select();
-                    new Toast(1, "请至少选择一个辅助键(Ctrl/Alt/Shift/Win)！").Show();
-                    return false;
-                }
-                if (!Util.HOTKEY_FREE.setHotkey(new bool[] { chkAlt3.Checked, chkCtrl3.Checked, chkShift3.Checked, chkWin3.Checked }, cbbKeys3.SelectedIndex)) {
-                    cbbKeys3.Select();
-                    new Toast(1, "请至少选择一个辅助键(Ctrl/Alt/Shift/Win)！").Show();
-                    return false;
-                }
-                if (!Util.HOTKEY_LAST.setHotkey(new bool[] { chkAlt4.Checked, chkCtrl4.Checked, chkShift4.Checked, chkWin4.Checked }, cbbKeys4.SelectedIndex)) {
-                    cbbKeys4.Select();
-                    new Toast(1, "请至少选择一个辅助键(Ctrl/Alt/Shift/Win)！").Show();
-                    return false;
-                }
-                if (!Util.HOTKEY_CLIP.setHotkey(new bool[] { chkAlt5.Checked, chkCtrl5.Checked, chkShift5.Checked, chkWin5.Checked }, cbbKeys5.SelectedIndex)) {
-                    cbbKeys5.Select();
-                    new Toast(1, "请至少选择一个辅助键(Ctrl/Alt/Shift/Win)！").Show();
-                    return false;
-                }
-                if (!Util.HOTKEY_EXIT.setHotkey(new bool[] { chkAlt6.Checked, chkCtrl6.Checked, chkShift6.Checked, chkWin6.Checked }, cbbKeys6.SelectedIndex)) {
-                    cbbKeys6.Select();
-                    new Toast(1, "请至少选择一个辅助键(Ctrl/Alt/Shift/Win)！").Show();
-                    return false;
-                }
+
                 #endregion
                 if (!checkHotkeyConflit()) {
                     return false;
                 }
                 #region 注册新设置的快捷键
-                if (Util.HOTKEY_WHOLE.RegistedHotkey != Util.HOTKEY_WHOLE.Hotkey) {
-                    IniFile.WriteIniData(Util.CONFIG_SECTION, Util.HOTKEY_WHOLE.KeyName, Util.HOTKEY_WHOLE.Hotkey);
-                    result &= HotKey.RegisteSetHotkey(Program.mainForm.Handle, Util.HOTKEY_WHOLE);
+                for (int i = 0; i < hotKeyCount; i++) {
+                    if (hotKeys[i].RegistedHotkey != hotKeys[i].Hotkey) {
+                        IniFile.WriteIniData(Util.CONFIG_SECTION, hotKeys[i].KeyName, hotKeys[i].Hotkey);
+                        result &= HotKey.RegisteSetHotkey(Program.mainForm.Handle, hotKeys[i]);
+                    }
                 }
-                if (Util.HOTKEY_ACTIVE.RegistedHotkey != Util.HOTKEY_ACTIVE.Hotkey) {
-                    IniFile.WriteIniData(Util.CONFIG_SECTION, Util.HOTKEY_ACTIVE.KeyName, Util.HOTKEY_ACTIVE.Hotkey);
-                    result &= HotKey.RegisteSetHotkey(Program.mainForm.Handle, Util.HOTKEY_ACTIVE);
-                }
-                if (Util.HOTKEY_FREE.RegistedHotkey != Util.HOTKEY_FREE.Hotkey) {
-                    IniFile.WriteIniData(Util.CONFIG_SECTION, Util.HOTKEY_FREE.KeyName, Util.HOTKEY_FREE.Hotkey);
-                    result &= HotKey.RegisteSetHotkey(Program.mainForm.Handle, Util.HOTKEY_FREE);
-                }
-                if (Util.HOTKEY_LAST.RegistedHotkey != Util.HOTKEY_LAST.Hotkey) {
-                    IniFile.WriteIniData(Util.CONFIG_SECTION, Util.HOTKEY_LAST.KeyName, Util.HOTKEY_LAST.Hotkey);
-                    result &= HotKey.RegisteSetHotkey(Program.mainForm.Handle, Util.HOTKEY_LAST);
-                }
-                if (Util.HOTKEY_CLIP.RegistedHotkey != Util.HOTKEY_CLIP.Hotkey) {
-                    IniFile.WriteIniData(Util.CONFIG_SECTION, Util.HOTKEY_CLIP.KeyName, Util.HOTKEY_CLIP.Hotkey);
-                    result &= HotKey.RegisteSetHotkey(Program.mainForm.Handle, Util.HOTKEY_CLIP);
-                }
-                if (Util.HOTKEY_EXIT.RegistedHotkey != Util.HOTKEY_EXIT.Hotkey)
-                {
-                    IniFile.WriteIniData(Util.CONFIG_SECTION, Util.HOTKEY_EXIT.KeyName, Util.HOTKEY_EXIT.Hotkey);
-                    result &= HotKey.RegisteSetHotkey(Program.mainForm.Handle, Util.HOTKEY_EXIT);
-                }
+             
                 if (!result) {
                     new Toast(2, "保存失败，请检查是否有快捷键和其他应用程序存在冲突").Show();
                 }
@@ -462,7 +468,7 @@ namespace lxzh
         private bool checkChanged() {
             bool result = txtSavePath.IsValueChanged || cbbExtension.IsValueChanged || chkSPO.IsStateChanged;
             if (!result) {
-                for (int i = 0; i < 6; i++) {
+                for (int i = 0; i < hotKeyCount; i++) {
                     for (int j = 0; j < 4; j++) {
                         result |= chkHotkeys[i][j].IsStateChanged;
                     }
@@ -476,10 +482,9 @@ namespace lxzh
         /// </summary>
         /// <returns></returns>
         private bool checkHotkeyConflit() {
-            string[] hotkeys = new string[] { Util.HOTKEY_WHOLE.Hotkey, Util.HOTKEY_ACTIVE.Hotkey, Util.HOTKEY_FREE.Hotkey, Util.HOTKEY_LAST.Hotkey ,Util.HOTKEY_EXIT.Hotkey};
             for (int i = 0; i < 4; i++) {
-                for (int j = i + 1; j < 5; j++) {
-                    if (hotkeys[j] == hotkeys[i]) {
+                for (int j = i + 1; j < hotKeyCount; j++) {
+                    if (hotKeys[j].Hotkey == hotKeys[i].Hotkey) {
                         new Toast(2, "快捷键存在冲突,请重新设置").Show();
                         object cbbKeys = Util.GetControlByName(this, "cbbKeys" + (j + 1));
                         if (cbbKeys != null) {

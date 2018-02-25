@@ -28,7 +28,7 @@ namespace lxzh
             this.hotkeyId = hotkeyId;
         }
 
-        private void FullScreenForm_Load(object sender, EventArgs e)
+        private void ScreenForm_Load(object sender, EventArgs e)
         {
             Rectangle rect = Screen.PrimaryScreen.Bounds;
             if (hotkeyId == Util.HOTKEY_ACTIVE.KeyId) {

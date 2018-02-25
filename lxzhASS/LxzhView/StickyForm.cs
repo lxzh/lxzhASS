@@ -13,11 +13,20 @@ namespace lxzh
 {
     public partial class StickyForm : Form
     {
+        private static int count;
         public StickyForm(Bitmap bmp) {
             InitializeComponent();
             bitmap = bmp;
-
-            this.FormClosing += (s, e) => bmp.Dispose();
+            count++;
+            this.FormClosing += (s, e) => {
+                bmp.Dispose();
+                count--;
+                if (count == 0) {
+                    if (Program.mainForm == null) {
+                        Application.Exit();
+                    }
+                }
+            };
 
             this.SetStyle(ControlStyles.ResizeRedraw, true);
             this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
@@ -209,7 +218,10 @@ namespace lxzh
             }
             base.OnPaint(e);
         }
-
+        /// <summary>
+        /// w/s/a/d控制上下左右移动，t/g/f/h控制缩放
+        /// </summary>
+        /// <param name="e"></param>
         protected override void OnKeyPress(KeyPressEventArgs e) {
             if (e.KeyChar == 'w') this.Top -= 1;
             if (e.KeyChar == 's') this.Top += 1;

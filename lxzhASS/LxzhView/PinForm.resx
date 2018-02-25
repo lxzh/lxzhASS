@@ -112,34 +112,344 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="fontBox.Items" mimetype="application/x-microsoft.net.object.binary.base64">
-    <value>
-        AAEAAAD/////AQAAAAAAAAAMAgAAAJoBbXNjb3JsaWIsIFZlcnNpb249Mi4wLjAuMCwgQ3VsdHVyZT1u
-        ZXV0cmFsLCBQdWJsaWNLZXlUb2tlbj1iNzdhNWM1NjE5MzRlMDg5XV0sIG1zY29ybGliLCBWZXJzaW9u
-        PTIuMC4wLjAsIEN1bHR1cmU9bmV1dHJhbCwgUHVibGljS2V5VG9rZW49Yjc3YTVjNTYxOTM0ZTA4OQUB
-        AAAAMFN5c3RlbS5Db2xsZWN0aW9ucy5HZW5lcmljLkxpc3RgMVtbU3lzdGVtLlN0cmluZwMAAAAGX2l0
-        ZW1zBV9zaXplCF92ZXJzaW9uBgAACAgCAAAACQMAAAAAAAAAAAAAAAwEAAAAS21zY29ybGliLCBWZXJz
-        aW9uPTIuMC4wLjAsIEN1bHR1cmU9bmV1dHJhbCwgUHVibGljS2V5VG9rZW49Yjc3YTVjNTYxOTM0ZTA4
-        OREDAAAAAAAAAAs=
+  <data name="rtbCode.Text" xml:space="preserve">
+    <value>using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace lxzh
+{
+    public partial class PinForm : Form
+    {
+        public PinForm()
+        {
+            InitializeComponent();
+            //this.MouseMove += Test_MouseMove;
+            //this.MouseDown += Test_MouseDown;
+            //this.MouseUp += Test_MouseUp;
+        }
+
+        const int LXZH_HTLEFT = 10;
+        const int LXZH_HTRIGHT = 11;
+        const int LXZH_HTTOP = 12;
+        const int LXZH_HTTOPLEFT = 13;
+        const int LXZH_HTTOPRIGHT = 14;
+        const int LXZH_HTBOTTOM = 15;
+        const int LXZH_HTBOTTOMLEFT = 0x10;
+        const int LXZH_HTBOTTOMRIGHT = 17;
+
+        protected override void WndProc(ref Message m)
+        {
+            switch (m.Msg)
+            {
+                case 0x0084:
+                    base.WndProc(ref m);
+                    Point vPoint = new Point((int)m.LParam &amp; 0xFFFF,
+                        (int)m.LParam &gt;&gt; 16 &amp; 0xFFFF);
+                    vPoint = PointToClient(vPoint);
+                    if (vPoint.X &lt;= 5)
+                        if (vPoint.Y &lt;= 5)
+                            m.Result = (IntPtr)LXZH_HTTOPLEFT;
+                        else if (vPoint.Y &gt;= ClientSize.Height - 5)
+                            m.Result = (IntPtr)LXZH_HTBOTTOMLEFT;
+                        else m.Result = (IntPtr)LXZH_HTLEFT;
+                    else if (vPoint.X &gt;= ClientSize.Width - 5)
+                        if (vPoint.Y &lt;= 5)
+                            m.Result = (IntPtr)LXZH_HTTOPRIGHT;
+                        else if (vPoint.Y &gt;= ClientSize.Height - 5)
+                            m.Result = (IntPtr)LXZH_HTBOTTOMRIGHT;
+                        else m.Result = (IntPtr)LXZH_HTRIGHT;
+                    else if (vPoint.Y &lt;= 5)
+                        m.Result = (IntPtr)LXZH_HTTOP;
+                    else if (vPoint.Y &gt;= ClientSize.Height - 5)
+                        m.Result = (IntPtr)LXZH_HTBOTTOM;
+                    break;
+                case 0x0201:                //鼠标左键按下的消息   
+                    m.Msg = 0x00A1;         //更改消息为非客户区按下鼠标   
+                    m.LParam = IntPtr.Zero; //默认值   
+                    m.WParam = new IntPtr(2);//鼠标放在标题栏内   
+                    base.WndProc(ref m);
+                    break;
+                default:
+                    base.WndProc(ref m);
+                    break;
+            }
+        }
+
+
+        #region 窗体大小调整的方法
+        public bool isMouseDown = false;
+        /// &lt;summary&gt;
+        /// 调整大小时，鼠标感应的边框宽度
+        /// &lt;/summary&gt;
+        private int ResizeBorderWidth = 6;
+        /// &lt;summary&gt;
+        /// 位置类型
+        /// &lt;/summary&gt;
+        private MouseLocationStyle loactionStyle = MouseLocationStyle.S22_MiddelCenter;
+        /// &lt;summary&gt;
+        /// 上一次鼠标坐标
+        /// &lt;/summary&gt;
+        private Point LastMoustLocation;
+
+        /// &lt;summary&gt;
+        /// 根据鼠标坐标，返回鼠标位置类型
+        /// &lt;/summary&gt;
+        /// &lt;param name="mouseLocation"&gt;鼠标距窗体左上角的坐标&lt;/param&gt;
+        /// &lt;returns&gt;&lt;/returns&gt;
+        private MouseLocationStyle GetLocationStyle(Point mouseLocation)
+        {
+            //左上
+            if (mouseLocation.X &lt;= ResizeBorderWidth &amp;&amp;
+                mouseLocation.Y &lt;= ResizeBorderWidth)
+            {
+                return MouseLocationStyle.S11_LeftTop;
+            }
+
+            //中上
+            if (mouseLocation.X &gt; ResizeBorderWidth &amp;&amp;
+                mouseLocation.X &lt;= this.Width - ResizeBorderWidth &amp;&amp;
+                mouseLocation.Y &lt;= ResizeBorderWidth)
+            {
+                return MouseLocationStyle.S12_CenterTop;
+            }
+
+            //右上
+            if (mouseLocation.X &gt; this.Width - ResizeBorderWidth &amp;&amp;
+                mouseLocation.Y &lt;= ResizeBorderWidth)
+            {
+                return MouseLocationStyle.S13_RightTop;
+            }
+
+            //左中
+            if (mouseLocation.X &lt;= ResizeBorderWidth &amp;&amp;
+                mouseLocation.Y &gt; ResizeBorderWidth &amp;&amp;
+                mouseLocation.Y &lt;= this.Height - ResizeBorderWidth)
+            {
+                return MouseLocationStyle.S21_MiddleLeft;
+            }
+
+            //中中
+            if (mouseLocation.X &gt; ResizeBorderWidth &amp;&amp;
+                mouseLocation.X &lt;= this.Width - ResizeBorderWidth &amp;&amp;
+                mouseLocation.Y &gt; ResizeBorderWidth &amp;&amp;
+                mouseLocation.Y &lt;= this.Height - ResizeBorderWidth)
+            {
+                return MouseLocationStyle.S22_MiddelCenter;
+            }
+
+            //右中
+            if (mouseLocation.X &gt; this.Width - ResizeBorderWidth &amp;&amp;
+                mouseLocation.Y &gt; ResizeBorderWidth &amp;&amp;
+                mouseLocation.Y &lt;= this.Height - ResizeBorderWidth)
+            {
+                return MouseLocationStyle.S23_RightMiddel;
+            }
+
+            //左下
+            if (mouseLocation.X &lt;= ResizeBorderWidth
+                &amp;&amp; mouseLocation.Y &gt; this.Height - ResizeBorderWidth)
+            {
+                return MouseLocationStyle.S31_LeftBottom;
+            }
+
+            //中下
+            if (mouseLocation.X &gt; ResizeBorderWidth &amp;&amp;
+                mouseLocation.X &lt;= this.Width - ResizeBorderWidth &amp;&amp;
+                mouseLocation.Y &gt; this.Height - ResizeBorderWidth)
+            {
+                return MouseLocationStyle.S32_CenterBottom;
+            }
+
+            //右下
+            if (mouseLocation.X &gt; this.Width - ResizeBorderWidth &amp;&amp;
+                mouseLocation.Y &gt; this.Height - ResizeBorderWidth)
+            {
+                return MouseLocationStyle.S33_RightBottom;
+            }
+
+            throw new Exception("未知区域");
+        }
+
+        /// &lt;summary&gt;
+        /// 根据鼠标位置类型，返回鼠标光标类型
+        /// &lt;/summary&gt;
+        /// &lt;param name="mouseStyle"&gt;鼠标位置类型&lt;/param&gt;
+        /// &lt;returns&gt;鼠标光标类型&lt;/returns&gt;
+        private Cursor GetCursorByMouseLocationStyle(MouseLocationStyle mouseStyle)
+        {
+            switch (mouseStyle)
+            {
+                case MouseLocationStyle.S11_LeftTop:
+                    return Cursors.SizeNWSE;
+                case MouseLocationStyle.S12_CenterTop:
+                    return Cursors.SizeNS;
+                case MouseLocationStyle.S13_RightTop:
+                    return Cursors.SizeNESW;
+                case MouseLocationStyle.S21_MiddleLeft:
+                    return Cursors.SizeWE;
+                case MouseLocationStyle.S22_MiddelCenter:
+                    return Cursors.Default;
+                case MouseLocationStyle.S23_RightMiddel:
+                    return Cursors.SizeWE;
+                case MouseLocationStyle.S31_LeftBottom:
+                    return Cursors.SizeNESW;
+                case MouseLocationStyle.S32_CenterBottom:
+                    return Cursors.SizeNS;
+                case MouseLocationStyle.S33_RightBottom:
+                    return Cursors.SizeNWSE;
+                default:
+                    return Cursors.Default;
+            }
+        }
+
+        /// &lt;summary&gt;
+        /// 根据鼠标坐标和鼠标坐标类型调整窗体大小
+        /// &lt;/summary&gt;
+        /// &lt;param name="mouseLocation"&gt;鼠标坐标&lt;/param&gt;
+        /// &lt;param name="mouseStyle"&gt;鼠标位置类型&lt;/param&gt;
+        private void ChangeSize(Point mouseLocation, MouseLocationStyle mouseStyle)
+        {
+            Size newSize = new Size(this.Width, this.Height);
+            switch (mouseStyle)
+            {
+                case MouseLocationStyle.S11_LeftTop:
+                    //左上
+                    newSize.Width -= mouseLocation.X;
+                    newSize.Height -= mouseLocation.Y;
+                    this.Location = new Point(this.Location.X + mouseLocation.X, this.Location.Y + mouseLocation.Y);
+                    break;
+                case MouseLocationStyle.S12_CenterTop:
+                    //中上
+                    newSize.Height -= mouseLocation.Y;
+                    this.Location = new Point(this.Location.X, this.Location.Y + mouseLocation.Y);
+                    break;
+                case MouseLocationStyle.S13_RightTop:
+                    //右上
+                    newSize.Width = mouseLocation.X;
+                    newSize.Height -= mouseLocation.Y;
+                    this.Location = new Point(this.Location.X, this.Location.Y + mouseLocation.Y);
+                    break;
+                case MouseLocationStyle.S21_MiddleLeft:
+                    //左中
+                    newSize.Width -= mouseLocation.X;
+                    this.Location = new Point(this.Location.X + mouseLocation.X, this.Location.Y);
+                    break;
+                case MouseLocationStyle.S22_MiddelCenter:
+                    //中中【无需调整】
+                    break;
+                case MouseLocationStyle.S23_RightMiddel:
+                    //中右
+                    newSize.Width = mouseLocation.X;
+                    break;
+                case MouseLocationStyle.S31_LeftBottom:
+                    //左下
+                    newSize.Width -= mouseLocation.X;
+                    newSize.Height = mouseLocation.Y;
+                    this.Location = new Point(this.Location.X + mouseLocation.X, this.Location.Y);
+                    break;
+                case MouseLocationStyle.S32_CenterBottom:
+                    //中下
+                    newSize.Height = mouseLocation.Y;
+                    break;
+                case MouseLocationStyle.S33_RightBottom:
+                    //右下
+                    newSize.Width = mouseLocation.X;
+                    newSize.Height = mouseLocation.Y;
+                    break;
+            }
+            if (newSize.Width &gt; 250 &amp;&amp; newSize.Height &gt; 200)
+                this.Size = newSize;
+
+
+        }
+
+        /// &lt;summary&gt;
+        /// 鼠标坐标类型枚举
+        /// 【用于调整窗体大小】
+        /// 【对应九宫格】
+        /// &lt;/summary&gt;
+        public enum MouseLocationStyle
+        {
+            S11_LeftTop,
+            S12_CenterTop,
+            S13_RightTop,
+            S21_MiddleLeft,
+            S22_MiddelCenter,
+            S23_RightMiddel,
+            S31_LeftBottom,
+            S32_CenterBottom,
+            S33_RightBottom
+        }
+
+        private void Test_MouseMove(object sender, MouseEventArgs e)
+        {
+            this.SuspendLayout();
+            //鼠标距界面左上角的坐标
+            Point mouseLocation = new Point(Control.MousePosition.X - this.Location.X, Control.MousePosition.Y - this.Location.Y);
+            //如果允许调整大小
+            if (this.isMouseDown &amp;&amp; this.loactionStyle != MouseLocationStyle.S22_MiddelCenter)
+            {
+                //调整大小
+                if (this.LastMoustLocation == null || Math.Abs(this.LastMoustLocation.X - mouseLocation.X) &gt;= 5 || Math.Abs(this.LastMoustLocation.Y - mouseLocation.Y) &gt;= 5)
+                {
+                    this.ChangeSize(mouseLocation, this.loactionStyle);
+                    this.LastMoustLocation = new Point(mouseLocation.X, mouseLocation.Y);
+
+                    //this.Text = string.Format("X: {0} Y:{1}", mouseLocation.X, mouseLocation.Y);
+                }
+            }
+            else
+            {
+                //鼠标位置
+                this.loactionStyle = this.GetLocationStyle(mouseLocation);
+                this.Cursor = this.GetCursorByMouseLocationStyle(this.loactionStyle);
+            }
+            this.ResumeLayout();
+        }
+
+        private void Test_MouseDown(object sender, MouseEventArgs e)
+        {
+            isMouseDown = true;
+
+        }
+
+        private void Test_MouseUp(object sender, MouseEventArgs e)
+        {
+            //调用窗体移动的方法            
+            isMouseDown = false;
+            this.Cursor = Cursors.Default;
+        }
+        #endregion
+
+        private void PinForm_Load(object sender, EventArgs e)
+        {
+
+        }
+    }
+}
 </value>
   </data>
-  <metadata name="timer1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>906, 60</value>
+  <metadata name="contextMenuStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
   </metadata>
-  <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>54</value>
-  </metadata>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-        AAABAAgAICAQAAEABADoAgAAhgAAABAQEAABAAQAKAEAAG4DAAAwMAAAAQAIAKgOAACWBAAAICAAAAEA
-        CACoCAAAPhMAABAQAAABAAgAaAUAAOYbAAAwMAAAAQAgAKglAABOIQAAICAAAAEAIACoEAAA9kYAABAQ
-        AAABACAAaAQAAJ5XAAAoAAAAIAAAAEAAAAABAAQAAAAAAIACAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAA
+        AAABAAgAICAQAAAABADoAgAAhgAAABAQEAAAAAQAKAEAAG4DAAAwMAAAAAAIAKgOAACWBAAAICAAAAAA
+        CACoCAAAPhMAABAQAAAAAAgAaAUAAOYbAAAwMAAAAAAgAKglAABOIQAAICAAAAAAIACoEAAA9kYAABAQ
+        AAAAACAAaAQAAJ5XAAAoAAAAIAAAAEAAAAABAAQAAAAAAIACAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAA
         gAAAgAAAAICAAIAAAACAAIAAgIAAAICAgADAwMAAAAD/AAD/AAAA//8A/wAAAP8A/wD//wAA////AACI
         eHh4eHh4eHh4eHh3gAAId3d3d3d3d3d3d3d3d3eAB4eIeHiHiHiHiHiHiIiHcAiI+I+PiPiPiIeI+PiI
         iIAIj4+PiPj/j4e4mIj4/4+ACP/4+Pj4+PiJibOP/4+PgA//iIiIiIiIe3h7eIiIj4AIjM7Odnzoznc3

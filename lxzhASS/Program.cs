@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -25,8 +28,14 @@ namespace lxzh
                 Application.Run(mainForm);
                 instance.ReleaseMutex();
             } else {
-                Application.Run(new CaptureForm());
+                IntPtr ptr=Win32.FindWindow(null, "设置");
+                
+                Win32.SendMessage(ptr, 0x104, 1, 2);
             }
+        }
+
+        public static void Skity(Bitmap bitmap) {
+            new StickyForm(bitmap).Show();
         }
     }
 }

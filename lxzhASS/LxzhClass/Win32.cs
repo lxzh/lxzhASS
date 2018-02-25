@@ -63,6 +63,8 @@ namespace lxzh {
 
         [DllImport("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd, uint uMsg, IntPtr wParam, IntPtr lParam);
+        [DllImport("User32.dll", EntryPoint = "SendMessage")]
+        public static extern IntPtr SendMessage(IntPtr hwnd, int wMsg, int wParam, int lParam);
         // Put this declaration in your class   //IntPtr
         [DllImport("USER32.DLL", EntryPoint = "SendMessage")]
         public static extern int SendMessage(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam);

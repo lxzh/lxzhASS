@@ -30,18 +30,20 @@
         {
             this.SuspendLayout();
             // 
-            // FullScreenForm
+            // ScreenForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(282, 255);
+            this.ClientSize = new System.Drawing.Size(5, 5);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Name = "FullScreenForm";
+            this.Margin = new System.Windows.Forms.Padding(2);
+            this.Name = "ScreenForm";
             this.ShowIcon = false;
             this.Text = "FullScreenForm";
+            this.TopMost = true;
             this.TransparencyKey = System.Drawing.SystemColors.Control;
-            this.Load += new System.EventHandler(this.FullScreenForm_Load);
+            this.Load += new System.EventHandler(this.ScreenForm_Load);
             this.ResumeLayout(false);
 
         }

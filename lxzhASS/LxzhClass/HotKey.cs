@@ -25,12 +25,11 @@ namespace lxzh
                 }
             }
             Keys keys = (Keys)(Keys.A + hotKeyValue[4]);
-            bool result=Win32.UnregisterHotKey(hWnd, keyModel.KeyId);
-            if(result){
-                result=Win32.RegisterHotKey(hWnd, keyModel.KeyId, keyModifier, keys);
-                if(result){
-                    keyModel.RegistedHotkey = keyModel.Hotkey;
-                }
+            Win32.UnregisterHotKey(hWnd, keyModel.KeyId);
+            bool result = Win32.RegisterHotKey(hWnd, keyModel.KeyId, keyModifier, keys);
+            if (result)
+            {
+                keyModel.RegistedHotkey = keyModel.Hotkey;
             }
             return result;
         }
