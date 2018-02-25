@@ -55,7 +55,7 @@
             this.rtbCode.Name = "rtbCode";
             this.rtbCode.Size = new System.Drawing.Size(500, 500);
             this.rtbCode.TabIndex = 0;
-            this.rtbCode.Text = resources.GetString("rtbCode.Text");
+            this.rtbCode.Text = "";
             this.rtbCode.WordWrap = false;
             // 
             // btnClose
