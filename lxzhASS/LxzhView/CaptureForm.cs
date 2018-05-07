@@ -89,21 +89,21 @@ namespace lxzh
             this.Location = new Point(0, 0);
 
             //获取屏幕放大比例
-            Graphics graphics = this.CreateGraphics(); 
-            int dpiX = (int)graphics.DpiX;
-            int dpiY = (int)graphics.DpiY;
-            float scaling=1.0f;
-            if(dpiX==96){
-                scaling=1.0F;
-            }else if(dpiX==120){
-                scaling=1.25F;
-            }else if(dpiX==144){
-                scaling=1.5F;
-            }else if(dpiX==192){
-                scaling=2.0F;
-            }else{
+            //Graphics graphics = this.CreateGraphics(); 
+            //int dpiX = (int)graphics.DpiX;
+            //int dpiY = (int)graphics.DpiY;
+            //float scaling=1.0f;
+            //if(dpiX==96){
+            //    scaling=1.0F;
+            //}else if(dpiX==120){
+            //    scaling=1.25F;
+            //}else if(dpiX==144){
+            //    scaling=1.5F;
+            //}else if(dpiX==192){
+            //    scaling=2.0F;
+            //}else{
 
-            }
+            //}
 
             foreach (Screen screen in Screen.AllScreens) {
                 maxWidth += screen.Bounds.Width;
@@ -155,7 +155,7 @@ namespace lxzh
         private void CaptureForm_Load(object sender, EventArgs e) {
             this.InitMember();
 
-            imageProcessBox.BaseImage = CaptureForm.GetScreen(this.isCaptureCursor,this.isFromClipBoard);
+            imageProcessBox.BaseImage = GetScreen(this.isCaptureCursor,this.isFromClipBoard);
             mHook.SetHook();
             mHook.MHookEvent += new MouseHook.MHookEventHandler(mHook_MHookEvent);
             imageProcessBox.IsDrawOperationDot = false;
@@ -585,7 +585,7 @@ namespace lxzh
 
         private void btnSave_Click(object sender, EventArgs e) {
             SaveFileDialog saveDlg = new SaveFileDialog();
-            saveDlg.Filter = "Bitmap(*.bmp)|*.bmp|JPEG(*.jpg)|*.jpg|PNG(*.png)|*.png";
+            saveDlg.Filter = Util.SUPPORT_EXTENSION_FILTER;
             saveDlg.FilterIndex = 3;
             saveDlg.FileName = Util.GetSavePicPath();
             if (saveDlg.ShowDialog() == DialogResult.OK) {
@@ -653,7 +653,7 @@ namespace lxzh
             }
         }
         //获取桌面图像
-        private static Bitmap GetScreen(bool bCaptureCursor, bool bFromClipBoard) {
+        private Bitmap GetScreen(bool bCaptureCursor, bool bFromClipBoard) {
             Bitmap bmp = new Bitmap(maxWidth, maxHeight);
             if (bCaptureCursor)      //是否捕获鼠标
                 DrawCurToScreen();
@@ -678,7 +678,7 @@ namespace lxzh
             return bmp;
         }
         //在桌面绘制鼠标
-        public static Rectangle DrawCurToScreen() {
+        public Rectangle DrawCurToScreen() {
             //如果直接将捕获到的鼠标画在bmp上 光标不会反色 指针边框也很浓 也就是说
             //尽管bmp上绘制了图像 绘制鼠标的时候还是以黑色作为鼠标的背景 然后在将混合好的鼠标绘制到图像 会很别扭
             //所以 干脆直接在桌面把鼠标绘制出来再截取桌面

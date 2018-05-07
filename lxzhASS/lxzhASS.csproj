@@ -117,7 +117,7 @@
       <DependentUpon>StickyForm.cs</DependentUpon>
     </Compile>
     <Compile Include="LxzhControl\ImageProcessBox.cs">
-      <SubType>Component</SubType>
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="LxzhControl\ImageProcessBox.Designer.cs">
       <DependentUpon>ImageProcessBox.cs</DependentUpon>

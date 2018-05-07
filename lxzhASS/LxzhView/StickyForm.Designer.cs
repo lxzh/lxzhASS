@@ -36,6 +36,8 @@
             this.tss2 = new System.Windows.Forms.ToolStripSeparator();
             this.tsmiHelp = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiClose = new System.Windows.Forms.ToolStripMenuItem();
+            this.timer = new System.Windows.Forms.Timer(this.components);
+            this.saveDlg = new System.Windows.Forms.SaveFileDialog();
             this.contextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -104,12 +106,20 @@
             this.tsmiClose.Size = new System.Drawing.Size(184, 22);
             this.tsmiClose.Text = "关闭";
             this.tsmiClose.Click += new System.EventHandler(this.tsmiClose_Click);
+            //
+            // timer
+            // 
+            this.timer.Interval = 3;
+            this.timer.Tick += new System.EventHandler(this.timer_Tick);
+            // 
             // 
             // StickyForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(5, 5);
+            this.DoubleBuffered = true;
+            this.ForeColor = System.Drawing.Color.Transparent;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -131,5 +141,7 @@
         private System.Windows.Forms.ToolStripMenuItem tsmiClose;
         private System.Windows.Forms.ToolStripSeparator tss2;
         private System.Windows.Forms.ToolStripMenuItem tsmiOTC;
+        private System.Windows.Forms.Timer timer;
+        private System.Windows.Forms.SaveFileDialog saveDlg;
     }
 }

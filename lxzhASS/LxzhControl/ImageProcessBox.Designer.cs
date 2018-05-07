@@ -29,9 +29,11 @@
             // 
             // ImageProcessBox
             // 
-            this.BackColor = System.Drawing.Color.Black;
-            this.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.BackColor = System.Drawing.Color.Transparent;
+            this.DoubleBuffered = true;
             this.ForeColor = System.Drawing.Color.White;
+            this.Name = "ImageProcessBox";
+            this.Size = new System.Drawing.Size(971, 437);
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ImageProcessBox_KeyPress);
             this.ResumeLayout(false);
 

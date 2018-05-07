@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Text;
 using System.Windows.Forms;
-using System.Security.Permissions;
 
 namespace lxzh {
     public partial class LxzhTextInput : TextBox {

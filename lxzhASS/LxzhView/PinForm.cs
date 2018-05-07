@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace lxzh
@@ -76,6 +70,22 @@ namespace lxzh
         {
             if (!string.IsNullOrEmpty(codeTxt)) {
                 rtbCode.Text = codeTxt;
+                Graphics g = rtbCode.CreateGraphics();
+                SizeF size = g.MeasureString(codeTxt, rtbCode.Font);
+                size.Width += 30;
+                size.Height *= 1.17F;
+                if (size.Height > 708 || size.Width > 1024) {
+                    size.Height += 60;
+                } else {
+                    size.Height += 30;
+                }
+                if (size.Width > 1024) {
+                    size.Width = 1024;
+                }
+                if (size.Height > 768) {
+                    size.Height = 768;
+                }
+                this.Size = size.ToSize();
             }
         }
 

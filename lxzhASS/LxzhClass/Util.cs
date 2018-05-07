@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
@@ -28,16 +25,16 @@ namespace lxzh
 
         public static KeyModel HOTKEY_WHOLE = new KeyModel("hotkey_whole","全屏截图", "Win+S", "S", 100);
 
-        public static KeyModel HOTKEY_ACTIVE = new KeyModel("hotkey_active", "活动窗体截图", "Alt+S", "S", 101);
+        public static KeyModel HOTKEY_ACTIVE = new KeyModel("hotkey_active", "活动窗体截图", "Ctrl+Shift+S", "S", 101);
 
-        public static KeyModel HOTKEY_FREE = new KeyModel("hotkey_free", "自由截图", "Ctrl+Alt+A", "A", 102);
+        public static KeyModel HOTKEY_FREE = new KeyModel("hotkey_free", "自由截图", "Ctrl+Alt+S", "S", 102);
 
         public static KeyModel HOTKEY_LAST = new KeyModel("hotkey_last", "重复上次选框截图", "Ctrl+Alt+L", "L", 103);
 
         public static KeyModel HOTKEY_CLIP = new KeyModel("hotkey_clip", "从剪贴板截图", "Ctrl+Shift+C", "C", 104);
 
-        public static KeyModel HOTKEY_TXTPIN = new KeyModel("hotkey_pin", "从剪贴板贴文本", "Ctrl+Shift+S", "S", 105);
-		
+        public static KeyModel HOTKEY_TXTPIN = new KeyModel("hotkey_pin", "从剪贴板贴文本", "Ctrl+Shift+T", "T", 105);
+
         public static KeyModel HOTKEY_EXIT = new KeyModel("hotkey_exit", "退出程序", "Ctrl+Shift+E", "E", 106);
         /// <summary>
         /// 字母按键个数
@@ -62,6 +59,10 @@ namespace lxzh
         /// </summary>
         public static string DEFAULT_FILE_EXTENSION = "png";
         /// <summary>
+        /// 默认截图文件扩展名
+        /// </summary>
+        public static string SUPPORT_EXTENSION_FILTER = "Bitmap(*.bmp)|*.bmp|JPEG(*.jpg)|*.jpg|PNG(*.png)|*.png";
+        /// <summary>
         /// 注册表注册名
         /// </summary>
         public static string KEY_NAME = "lxzhASS";
@@ -70,7 +71,7 @@ namespace lxzh
 
         //绘制圆角
         public static void SetWindowRegion(Control control, int radiu) {
-            Rectangle rect = new Rectangle(0, 0, control.Width - 2, control.Height - 2);//this.Left-10,this.Top-10,this.Width-10,this.Height-10);                 
+            Rectangle rect = new Rectangle(0, 0, control.Width - 2, control.Height - 2);//this.Left-10,this.Top-10,this.Width-10,this.Height-10);
             GraphicsPath FormPath = GetRoundedRectPath(rect, 2);
             control.Region = new Region(FormPath);
         }
@@ -179,7 +180,7 @@ namespace lxzh
         public int Bottom;                          //最下坐标
     }
 
-    //定义了辅助键的名称（将数字转变为字符以便于记忆，也可去除此枚举而直接使用数值）  
+    //定义了辅助键的名称（将数字转变为字符以便于记忆，也可去除此枚举而直接使用数值）
     [Flags()]
     public enum KeyModifiers
     {

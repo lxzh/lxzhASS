@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using System.IO;
-using System.Text.RegularExpressions;
-using System.Threading;
 
 namespace lxzh {
     public partial class MainForm : Form {
@@ -157,6 +151,7 @@ namespace lxzh {
                 //new Thread(new ThreadStart(loadSetting)).Start();
                 this.Location = new Point(-500, -500);  //将窗体移除屏幕外(否则一闪而过)
                 this.BeginInvoke(new MethodInvoker(() => this.Visible = false));    //因为直接this.visible = false没用
+                StartCapture(false);
             }
         }
 
@@ -362,9 +357,9 @@ namespace lxzh {
         }
         //启动截图
         public void StartCapture(bool fromClip) {
-            CaptureForm capture = new CaptureForm();
             try {
                 if (!CaptureForm.isAlive) {
+                    CaptureForm capture = new CaptureForm();
                     capture.IsCaptureCursor = false;
                     capture.IsFromClipBoard = fromClip;
                     capture.Show();
@@ -430,6 +425,11 @@ namespace lxzh {
                     if (hotKeys[i].RegistedHotkey != hotKeys[i].Hotkey) {
                         IniFile.WriteIniData(Util.CONFIG_SECTION, hotKeys[i].KeyName, hotKeys[i].Hotkey);
                         result &= HotKey.RegisteSetHotkey(Program.mainForm.Handle, hotKeys[i]);
+                        bool rst = HotKey.RegisteSetHotkey(Program.mainForm.Handle, hotKeys[i]);
+                        if (rst) {
+                            IniFile.WriteIniData(Util.CONFIG_SECTION, hotKeys[i].KeyName, hotKeys[i].Hotkey);
+                        }
+                        result &= rst;
                     }
                 }
              

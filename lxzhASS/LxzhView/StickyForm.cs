@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 using System.Threading;
@@ -47,6 +43,11 @@ namespace lxzh
         private bool bMaxmum;
         private Size szForm;
         private float fScale;
+        private int zoomCount = 0;
+        private int zoomNum = 0;
+
+        private const int minWidth = 30;
+        private const int minHeight = 30;
 
         private Rectangle rectSaveO;
         private Rectangle rectSaveC;
@@ -144,30 +145,128 @@ namespace lxzh
 
         protected override void OnMouseWheel(MouseEventArgs e) {
             if (bMouseEnter) {
-                float nIncrement = 0;
-                if (e.Delta > 0) {
-                    if (this.Width < Screen.PrimaryScreen.Bounds.Width
-                        || this.Height < Screen.PrimaryScreen.Bounds.Height)
-                        nIncrement = 0.1F;
-                    else return;
-                }
-                if (e.Delta < 0) {
-                    if (this.Width > 100 || this.Height > 30)
-                        nIncrement = -0.1F;
-                    else return;
-                }
+                //float nIncrement = 0;
+                //if (e.Delta > 0) {
+                //    if (this.Width < Screen.PrimaryScreen.Bounds.Width
+                //        || this.Height < Screen.PrimaryScreen.Bounds.Height)
+                //        nIncrement = 0.1F;
+                //    else return;
+                //}
+                //if (e.Delta < 0) {
+                //    if (this.Width > 100 || this.Height > 30)
+                //        nIncrement = -0.1F;
+                //    else return;
+                //}
 
-                fScale += nIncrement;
-                this.SuspendLayout();
-                if (!bMinimum && !bMaxmum) {
-                    int x = (int)(MousePosition.X - (int)(e.X / (fScale - nIncrement)) * fScale);
-                    int y = (int)(MousePosition.Y - (int)(e.Y / (fScale - nIncrement)) * fScale);
-                    this.Location = new Point(x,y);
-                }
-                this.Size = new Size((int)(szForm.Width * fScale + 2),(int)(szForm.Height * fScale + 2));
-                this.ResumeLayout();
+                //fScale += nIncrement;
+                //this.SuspendLayout();
+                //if (!bMinimum && !bMaxmum) {
+                //    int x = (int)(MousePosition.X - (int)(e.X / (fScale - nIncrement)) * fScale);
+                //    int y = (int)(MousePosition.Y - (int)(e.Y / (fScale - nIncrement)) * fScale);
+                //    this.Location = new Point(x,y);
+                //}
+                //this.Size = new Size((int)(szForm.Width * fScale + 2),(int)(szForm.Height * fScale + 2));
+                //this.ResumeLayout();
+                timer.Stop();
+                Zoom(e.Delta);
             }
             base.OnMouseWheel(e);
+        }
+
+        private void Zoom(int delta) {
+            
+            if (delta >= 1) {
+                zoomCount = 5;
+            } else if (delta <= -1) {
+                zoomCount = -5;
+            }
+            if (zoomCount != 0) {
+                timer.Start();
+
+            }
+        }
+
+        private void timer_Tick(object sender, EventArgs e) {
+            if (zoomCount > 0) {
+                zoomNum++;
+                zoomOut();
+            } else {
+                zoomNum--;
+                zoomIn();
+            }
+            this.ResumeLayout();
+        }
+        /// <summary>
+        /// 放大
+        /// </summary>
+        private void zoomOut() {
+            int w = this.Width;
+            int h = this.Height;
+            float wDivH = szForm.Width * 1.0F / szForm.Height;
+            fScale  +=0.01F;
+            double deltaW = szForm.Width * 0.01;
+            double deltaH = szForm.Height * 0.01;
+            if (deltaW < 1)
+                deltaW = 1;
+            if (deltaH < 1)
+                deltaH = 1;
+            this.SuspendLayout();
+            if (bMaxmum) {
+                zoomNum = 0;
+                timer.Stop();
+            }
+            int width = Convert.ToInt32(w + deltaW);
+            int height = Convert.ToInt32(h + deltaH);
+            if (height > minHeight) {//校正宽高比
+                height = (int)(width / wDivH);
+            }
+            deltaW = width - w;
+            deltaH = height - h;
+            Size newSize = new Size(width, height);
+            int deltaX = (int)(deltaW * ((MousePosition.X - this.Location.X) * 1.0 / w));
+            int deltaY = (int)(deltaH * ((MousePosition.Y - this.Location.Y) * 1.0 / h));
+            this.Location = new Point(this.Location.X - deltaX, this.Location.Y - deltaY);
+            this.Size = newSize;
+            if (zoomNum >= 25) {
+                zoomNum = 0;
+                timer.Stop();
+            }
+        }
+        /// <summary>
+        /// 缩小
+        /// </summary>
+        private void zoomIn() {
+            int w = this.Width;
+            int h = this.Height;
+            float wDivH = szForm.Width * 1.0F / szForm.Height;
+            fScale -= 0.01F;
+            double deltaW = szForm.Width * 0.01;
+            double deltaH = szForm.Height * 0.01;
+            if (deltaW < 1)
+                deltaW = 1;
+            if (deltaH < 1)
+                deltaH = 1;
+            this.SuspendLayout();
+            if (bMinimum) {
+                zoomNum = 0;
+                timer.Stop();
+            }
+            int width = Convert.ToInt32(w - deltaW);
+            int height = Convert.ToInt32(h - deltaH);
+            if (height > minHeight) {//校正宽高比
+                height = (int)(width / wDivH);
+            }
+            deltaW = w - width;
+            deltaH = h - height;
+            Size newSize = new Size(width, height);
+            int deltaX = (int)(deltaW * ((MousePosition.X - this.Location.X) * 1.0 / w));
+            int deltaY = (int)(deltaH * ((MousePosition.Y - this.Location.Y) * 1.0 / h));
+            this.Location = new Point(this.Location.X + deltaX, this.Location.Y + deltaY);
+            this.Size = newSize;
+            if (zoomNum <= -25) {
+                zoomNum = 0;
+                timer.Stop();
+            }
         }
 
         protected override void OnPaint(PaintEventArgs e) {
@@ -237,15 +336,12 @@ namespace lxzh
         protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
             int w = Screen.PrimaryScreen.Bounds.Width;
             int h = Screen.PrimaryScreen.Bounds.Height;
-            if (width < 100) 
-                width = 100;
-            if (width > Screen.PrimaryScreen.Bounds.Width) 
-                width = w;
-            if (height < 30) height = 30;
-            if (height > Screen.PrimaryScreen.Bounds.Height) 
-                height = h;
-            bMinimum = width == 100 || height == 30;
-            bMaxmum = width == w || height == h;
+            if (width < minWidth) width = minWidth;
+            if (width > Screen.PrimaryScreen.Bounds.Width) width = w;
+            if (height < minHeight) height = minHeight;
+            if (height > Screen.PrimaryScreen.Bounds.Height) height = h;
+            bMinimum = (width == minWidth || height == minHeight);
+            bMaxmum = (width == w || height == h);
             if (bMaxmum) 
                 x = y = 0;
             base.SetBoundsCore(x, y, width, height, specified);
@@ -297,7 +393,7 @@ namespace lxzh
             }
             using (Bitmap bmp = new Bitmap(this.Width - 2, this.Height - 2, PixelFormat.Format24bppRgb)) {
                 using (Graphics g = Graphics.FromImage(bmp)) {
-                    g.DrawImage(bmp, 0, 0, bmp.Width, bmp.Height);
+                    g.DrawImage(bitmap, 0, 0, this.Width - 2, this.Height - 2);
                     Clipboard.SetImage(bmp);
                 }
             }
@@ -305,16 +401,13 @@ namespace lxzh
 
         private void SaveBmp(bool bOriginal) {
             SaveFileDialog saveDlg = new SaveFileDialog();
-            saveDlg.Filter = "Bitmap(*.bmp)|*.bmp|JPEG(*.jpg)|*.jpg|PNG(*.png)|*.png";
+            saveDlg.Filter = Util.SUPPORT_EXTENSION_FILTER;
             saveDlg.FilterIndex = 3;
             saveDlg.FileName = Util.GetSavePicPath();
             if (saveDlg.ShowDialog() == DialogResult.OK) {
-                using (Bitmap bmp = bOriginal ? bitmap.Clone() as Bitmap :
-                    new Bitmap(this.Width - 2, this.Height - 2, PixelFormat.Format24bppRgb)) {
-                    if (bOriginal) {
-                        using (Graphics g = Graphics.FromImage(bmp)) {
-                            g.DrawImage(bmp, 0, 0, this.Width - 2, this.Height - 2);
-                        }
+                using (Bitmap bmp = bOriginal ? bitmap.Clone() as Bitmap : new Bitmap(this.Width - 2, this.Height - 2, PixelFormat.Format24bppRgb)) {
+                    using (Graphics g = Graphics.FromImage(bmp)) {
+                        g.DrawImage(bmp, 0, 0, this.Width - 2, this.Height - 2);
                     }
                     switch (saveDlg.FilterIndex) {
                         case 1:
@@ -327,6 +420,7 @@ namespace lxzh
                             bmp.Save(saveDlg.FileName, ImageFormat.Png);
                             break;
                     }
+                    Clipboard.SetImage(bmp);
                 }
             }
         }
