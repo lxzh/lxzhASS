@@ -1,0 +1,141 @@
+diff --git a/lxzhASS/LxzhClass/FormUtil.cs b/lxzhASS/LxzhClass/FormUtil.cs
+index bfcc3b6..07f7815 100644
+--- a/lxzhASS/LxzhClass/FormUtil.cs
++++ b/lxzhASS/LxzhClass/FormUtil.cs
+@@ -1,7 +1,6 @@
+ ﻿using System;
+ using System.Collections.Generic;
+-using System.Text;
+-using System.Runtime.InteropServices;
++using System.Text;
+ using System.Drawing;
+ 
+ namespace lxzh
+diff --git a/lxzhASS/LxzhClass/HotKey.cs b/lxzhASS/LxzhClass/HotKey.cs
+index 8548829..1ad7353 100644
+--- a/lxzhASS/LxzhClass/HotKey.cs
++++ b/lxzhASS/LxzhClass/HotKey.cs
+@@ -1,10 +1,6 @@
+-﻿using System;
+-using System.Collections.Generic;
+-using System.Linq;
+-using System.Text;
+-using System.Windows.Forms;
+-using System.Runtime.InteropServices;
+-
++﻿using System;
++using System.Windows.Forms;
++
+ namespace lxzh
+ {
+     public class HotKey
+diff --git a/lxzhASS/LxzhClass/KeyHook.cs b/lxzhASS/LxzhClass/KeyHook.cs
+index 7c00b64..8f2f94c 100644
+--- a/lxzhASS/LxzhClass/KeyHook.cs
++++ b/lxzhASS/LxzhClass/KeyHook.cs
+@@ -1,6 +1,4 @@
+-﻿using System;
+-using System.Collections.Generic;
+-using System.Text;
++﻿using System;
+ using System.Runtime.InteropServices;
+ 
+ namespace lxzh
+diff --git a/lxzhASS/LxzhClass/KeyModel.cs b/lxzhASS/LxzhClass/KeyModel.cs
+index 84ffef8..732fad7 100644
+--- a/lxzhASS/LxzhClass/KeyModel.cs
++++ b/lxzhASS/LxzhClass/KeyModel.cs
+@@ -1,8 +1,5 @@
+-﻿using System;
+-using System.Collections.Generic;
+-using System.Linq;
+-using System.Text;
+-
++﻿using System;
++
+ namespace lxzh {
+     public class KeyModel {
+         private string keyName;
+diff --git a/lxzhASS/LxzhClass/MouseHook.cs b/lxzhASS/LxzhClass/MouseHook.cs
+index f57a91b..00e7b5e 100644
+--- a/lxzhASS/LxzhClass/MouseHook.cs
++++ b/lxzhASS/LxzhClass/MouseHook.cs
+@@ -1,7 +1,5 @@
+-﻿using System;
+-using System.Collections.Generic;
+-using System.Text;
+-
++﻿using System;
++
+ using System.Diagnostics;
+ using System.Runtime.InteropServices;
+ 
+diff --git a/lxzhASS/LxzhClass/RegistryUtil.cs b/lxzhASS/LxzhClass/RegistryUtil.cs
+index 6a05251..10b552d 100644
+--- a/lxzhASS/LxzhClass/RegistryUtil.cs
++++ b/lxzhASS/LxzhClass/RegistryUtil.cs
+@@ -1,7 +1,4 @@
+-﻿using System;
+-using System.Collections.Generic;
+-using System.Linq;
+-using System.Text;
++﻿using System;
+ using System.Windows.Forms;
+ using Microsoft.Win32;
+ using System.IO;
+diff --git a/lxzhASS/LxzhClass/Util.cs b/lxzhASS/LxzhClass/Util.cs
+index 583339d..3d805ad 100644
+--- a/lxzhASS/LxzhClass/Util.cs
++++ b/lxzhASS/LxzhClass/Util.cs
+@@ -1,7 +1,4 @@
+-﻿using System;
+-using System.Collections.Generic;
+-using System.Linq;
+-using System.Text;
++﻿using System;
+ using System.Runtime.InteropServices;
+ using System.Windows.Forms;
+ using System.Drawing.Drawing2D;
+@@ -28,15 +25,15 @@ namespace lxzh
+ 
+         public static KeyModel HOTKEY_WHOLE = new KeyModel("hotkey_whole","全屏截图", "Win+S", "S", 100);
+ 
+-        public static KeyModel HOTKEY_ACTIVE = new KeyModel("hotkey_active", "活动窗体截图", "Alt+S", "S", 101);
++        public static KeyModel HOTKEY_ACTIVE = new KeyModel("hotkey_active", "活动窗体截图", "Ctrl+Shift+S", "S", 101);
+ 
+-        public static KeyModel HOTKEY_FREE = new KeyModel("hotkey_free", "自由截图", "Ctrl+Alt+A", "A", 102);
++        public static KeyModel HOTKEY_FREE = new KeyModel("hotkey_free", "自由截图", "Ctrl+Alt+S", "S", 102);
+ 
+         public static KeyModel HOTKEY_LAST = new KeyModel("hotkey_last", "重复上次选框截图", "Ctrl+Alt+L", "L", 103);
+ 
+         public static KeyModel HOTKEY_CLIP = new KeyModel("hotkey_clip", "从剪贴板截图", "Ctrl+Shift+C", "C", 104);
+ 
+-        public static KeyModel HOTKEY_TXTPIN = new KeyModel("hotkey_pin", "从剪贴板贴文本", "Ctrl+Shift+S", "S", 105);
++        public static KeyModel HOTKEY_TXTPIN = new KeyModel("hotkey_pin", "从剪贴板贴文本", "Ctrl+Shift+T", "T", 105);
+ 		
+         public static KeyModel HOTKEY_EXIT = new KeyModel("hotkey_exit", "退出程序", "Ctrl+Shift+E", "E", 106);
+         /// <summary>
+@@ -60,7 +57,11 @@ namespace lxzh
+         /// <summary>
+         /// 默认截图文件扩展名
+         /// </summary>
+-        public static string DEFAULT_FILE_EXTENSION = "png";
++        public static string DEFAULT_FILE_EXTENSION = "png";
++        /// <summary>
++        /// 默认截图文件扩展名
++        /// </summary>
++        public static string SUPPORT_EXTENSION_FILTER = "Bitmap(*.bmp)|*.bmp|JPEG(*.jpg)|*.jpg|PNG(*.png)|*.png";
+         /// <summary>
+         /// 注册表注册名
+         /// </summary>
+diff --git a/lxzhASS/LxzhClass/Win32.cs b/lxzhASS/LxzhClass/Win32.cs
+index 64c7381..21b902e 100644
+--- a/lxzhASS/LxzhClass/Win32.cs
++++ b/lxzhASS/LxzhClass/Win32.cs
+@@ -1,5 +1,4 @@
+-﻿using System;
+-using System.Collections.Generic;
++﻿using System;
+ using System.Text;
+ 
+ using System.Runtime.InteropServices;
