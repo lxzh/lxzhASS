@@ -1,0 +1,541 @@
+diff --git a/lxzhASS/LxzhView/CaptureForm.cs b/lxzhASS/LxzhView/CaptureForm.cs
+index bc005ce..5d328d8 100644
+--- a/lxzhASS/LxzhView/CaptureForm.cs
++++ b/lxzhASS/LxzhView/CaptureForm.cs
+@@ -1,15 +1,10 @@
+ ﻿using System;
+ using System.Collections.Generic;
+-using System.ComponentModel;
+-using System.Data;
+-using System.Drawing;
+-using System.Text;
+-using System.Windows.Forms;
+-
+-using System.Threading;
+-using System.Drawing.Drawing2D;
+-using System.Reflection;
+-
++using System.ComponentModel;
++using System.Drawing;
++using System.Windows.Forms;
++
++
+ namespace lxzh
+ {
+     public partial class CaptureForm : Form
+@@ -26,8 +21,8 @@ namespace lxzh
+         private Cursor crossCursor;
+         public static bool isAlive = false;
+ 
+-        private static int maxHeight = 0;
+-        private static int maxWidth = 0;
++        private int maxHeight = 0;
++        private int maxWidth = 0;
+ 
+         #region Properties
+ 
+@@ -89,21 +84,21 @@ namespace lxzh
+             this.Location = new Point(0, 0);
+ 
+             //获取屏幕放大比例
+-            Graphics graphics = this.CreateGraphics(); 
+-            int dpiX = (int)graphics.DpiX;
+-            int dpiY = (int)graphics.DpiY;
+-            float scaling=1.0f;
+-            if(dpiX==96){
+-                scaling=1.0F;
+-            }else if(dpiX==120){
+-                scaling=1.25F;
+-            }else if(dpiX==144){
+-                scaling=1.5F;
+-            }else if(dpiX==192){
+-                scaling=2.0F;
+-            }else{
+-
+-            }
++            //Graphics graphics = this.CreateGraphics(); 
++            //int dpiX = (int)graphics.DpiX;
++            //int dpiY = (int)graphics.DpiY;
++            //float scaling=1.0f;
++            //if(dpiX==96){
++            //    scaling=1.0F;
++            //}else if(dpiX==120){
++            //    scaling=1.25F;
++            //}else if(dpiX==144){
++            //    scaling=1.5F;
++            //}else if(dpiX==192){
++            //    scaling=2.0F;
++            //}else{
++
++            //}
+ 
+             foreach (Screen screen in Screen.AllScreens) {
+                 maxWidth += screen.Bounds.Width;
+@@ -155,7 +150,7 @@ namespace lxzh
+         private void CaptureForm_Load(object sender, EventArgs e) {
+             this.InitMember();
+ 
+-            imageProcessBox.BaseImage = CaptureForm.GetScreen(this.isCaptureCursor,this.isFromClipBoard);
++            imageProcessBox.BaseImage = GetScreen(this.isCaptureCursor,this.isFromClipBoard);
+             mHook.SetHook();
+             mHook.MHookEvent += new MouseHook.MHookEventHandler(mHook_MHookEvent);
+             imageProcessBox.IsDrawOperationDot = false;
+@@ -584,8 +579,8 @@ namespace lxzh
+         }
+ 
+         private void btnSave_Click(object sender, EventArgs e) {
+-            SaveFileDialog saveDlg = new SaveFileDialog();
+-            saveDlg.Filter = "Bitmap(*.bmp)|*.bmp|JPEG(*.jpg)|*.jpg|PNG(*.png)|*.png";
++            SaveFileDialog saveDlg = new SaveFileDialog();
++            saveDlg.Filter = Util.SUPPORT_EXTENSION_FILTER;
+             saveDlg.FilterIndex = 3;
+             saveDlg.FileName = Util.GetSavePicPath();
+             if (saveDlg.ShowDialog() == DialogResult.OK) {
+@@ -653,7 +648,7 @@ namespace lxzh
+             }
+         }
+         //获取桌面图像
+-        private static Bitmap GetScreen(bool bCaptureCursor, bool bFromClipBoard) {
++        private Bitmap GetScreen(bool bCaptureCursor, bool bFromClipBoard) {
+             Bitmap bmp = new Bitmap(maxWidth, maxHeight);
+             if (bCaptureCursor)      //是否捕获鼠标
+                 DrawCurToScreen();
+@@ -678,7 +673,7 @@ namespace lxzh
+             return bmp;
+         }
+         //在桌面绘制鼠标
+-        public static Rectangle DrawCurToScreen() {
++        public Rectangle DrawCurToScreen() {
+             //如果直接将捕获到的鼠标画在bmp上 光标不会反色 指针边框也很浓 也就是说
+             //尽管bmp上绘制了图像 绘制鼠标的时候还是以黑色作为鼠标的背景 然后在将混合好的鼠标绘制到图像 会很别扭
+             //所以 干脆直接在桌面把鼠标绘制出来再截取桌面
+diff --git a/lxzhASS/LxzhView/MainForm.cs b/lxzhASS/LxzhView/MainForm.cs
+index 339d74d..4fe70a9 100644
+--- a/lxzhASS/LxzhView/MainForm.cs
++++ b/lxzhASS/LxzhView/MainForm.cs
+@@ -1,14 +1,8 @@
+ ﻿using System;
+-using System.Collections.Generic;
+-using System.ComponentModel;
+-using System.Data;
+ using System.Drawing;
+ using System.Linq;
+-using System.Text;
+ using System.Windows.Forms;
+ using System.IO;
+-using System.Text.RegularExpressions;
+-using System.Threading;
+ 
+ namespace lxzh {
+     public partial class MainForm : Form {
+@@ -157,6 +151,7 @@ namespace lxzh {
+                 //new Thread(new ThreadStart(loadSetting)).Start();
+                 this.Location = new Point(-500, -500);  //将窗体移除屏幕外(否则一闪而过)
+                 this.BeginInvoke(new MethodInvoker(() => this.Visible = false));    //因为直接this.visible = false没用
++                StartCapture(false);
+             }
+         }
+ 
+@@ -362,12 +357,13 @@ namespace lxzh {
+         }
+         //启动截图
+         public void StartCapture(bool fromClip) {
+-            CaptureForm capture = new CaptureForm();
+             try {
+                 if (!CaptureForm.isAlive) {
++                    CaptureForm capture = new CaptureForm();
+                     capture.IsCaptureCursor = false;
+                     capture.IsFromClipBoard = fromClip;
+                     capture.Show();
++                    //capture.Dispose();
+                 }
+             } catch (Exception ex) {
+                 Console.WriteLine(ex.ToString());
+@@ -428,8 +424,11 @@ namespace lxzh {
+                 #region 注册新设置的快捷键
+                 for (int i = 0; i < hotKeyCount; i++) {
+                     if (hotKeys[i].RegistedHotkey != hotKeys[i].Hotkey) {
+-                        IniFile.WriteIniData(Util.CONFIG_SECTION, hotKeys[i].KeyName, hotKeys[i].Hotkey);
+-                        result &= HotKey.RegisteSetHotkey(Program.mainForm.Handle, hotKeys[i]);
++                        bool rst = HotKey.RegisteSetHotkey(Program.mainForm.Handle, hotKeys[i]);
++                        if (rst) {
++                            IniFile.WriteIniData(Util.CONFIG_SECTION, hotKeys[i].KeyName, hotKeys[i].Hotkey);
++                        }
++                        result &= rst;
+                     }
+                 }
+              
+diff --git a/lxzhASS/LxzhView/PinForm.cs b/lxzhASS/LxzhView/PinForm.cs
+index 8e3dc2a..8d5edeb 100644
+--- a/lxzhASS/LxzhView/PinForm.cs
++++ b/lxzhASS/LxzhView/PinForm.cs
+@@ -1,11 +1,5 @@
+ ﻿using System;
+-using System.Collections.Generic;
+-using System.ComponentModel;
+-using System.Data;
+ using System.Drawing;
+-using System.Linq;
+-using System.Text;
+-using System.Threading.Tasks;
+ using System.Windows.Forms;
+ 
+ namespace lxzh
+@@ -76,6 +70,22 @@ namespace lxzh
+         {
+             if (!string.IsNullOrEmpty(codeTxt)) {
+                 rtbCode.Text = codeTxt;
++                Graphics g = rtbCode.CreateGraphics();
++                SizeF size = g.MeasureString(codeTxt, rtbCode.Font);
++                size.Width += 30;
++                size.Height *= 1.17F;
++                if (size.Height > 708 || size.Width > 1024) {
++                    size.Height += 60;
++                } else {
++                    size.Height += 30;
++                }
++                if (size.Width > 1024) {
++                    size.Width = 1024;
++                }
++                if (size.Height > 768) {
++                    size.Height = 768;
++                }
++                this.Size = size.ToSize();
+             }
+         }
+ 
+diff --git a/lxzhASS/LxzhView/ScreenForm.cs b/lxzhASS/LxzhView/ScreenForm.cs
+index fe6addf..fdf7ba3 100644
+--- a/lxzhASS/LxzhView/ScreenForm.cs
++++ b/lxzhASS/LxzhView/ScreenForm.cs
+@@ -1,12 +1,6 @@
+ ﻿using System;
+-using System.Collections.Generic;
+-using System.ComponentModel;
+-using System.Data;
+ using System.Drawing;
+-using System.Linq;
+-using System.Text;
+ using System.Windows.Forms;
+-using System.IO;
+ 
+ namespace lxzh
+ {
+diff --git a/lxzhASS/LxzhView/StickyForm.Designer.cs b/lxzhASS/LxzhView/StickyForm.Designer.cs
+index 435bca9..cd073dc 100644
+--- a/lxzhASS/LxzhView/StickyForm.Designer.cs
++++ b/lxzhASS/LxzhView/StickyForm.Designer.cs
+@@ -36,6 +36,8 @@
+             this.tss2 = new System.Windows.Forms.ToolStripSeparator();
+             this.tsmiHelp = new System.Windows.Forms.ToolStripMenuItem();
+             this.tsmiClose = new System.Windows.Forms.ToolStripMenuItem();
++            this.timer = new System.Windows.Forms.Timer(this.components);
++            this.saveDlg = new System.Windows.Forms.SaveFileDialog();
+             this.contextMenuStrip.SuspendLayout();
+             this.SuspendLayout();
+             // 
+@@ -105,11 +107,18 @@
+             this.tsmiClose.Text = "关闭";
+             this.tsmiClose.Click += new System.EventHandler(this.tsmiClose_Click);
+             // 
++            // timer
++            // 
++            this.timer.Interval = 3;
++            this.timer.Tick += new System.EventHandler(this.timer_Tick);
++            // 
+             // StickyForm
+             // 
+             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+             this.ClientSize = new System.Drawing.Size(5, 5);
++            this.DoubleBuffered = true;
++            this.ForeColor = System.Drawing.Color.Transparent;
+             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+@@ -131,5 +140,7 @@
+         private System.Windows.Forms.ToolStripMenuItem tsmiClose;
+         private System.Windows.Forms.ToolStripSeparator tss2;
+         private System.Windows.Forms.ToolStripMenuItem tsmiOTC;
++        private System.Windows.Forms.Timer timer;
++        private System.Windows.Forms.SaveFileDialog saveDlg;
+     }
+ }
+\ No newline at end of file
+diff --git a/lxzhASS/LxzhView/StickyForm.cs b/lxzhASS/LxzhView/StickyForm.cs
+index 1c021dd..95298cb 100644
+--- a/lxzhASS/LxzhView/StickyForm.cs
++++ b/lxzhASS/LxzhView/StickyForm.cs
+@@ -1,9 +1,5 @@
+-﻿using System;
+-using System.Collections.Generic;
+-using System.ComponentModel;
+-using System.Data;
+-using System.Drawing;
+-using System.Text;
++﻿using System;
++using System.Drawing;
+ using System.Windows.Forms;
+ 
+ using System.Threading;
+@@ -47,6 +43,11 @@ namespace lxzh
+         private bool bMaxmum;
+         private Size szForm;
+         private float fScale;
++        private int zoomCount = 0;
++        private int zoomNum = 0;
++
++        private const int minWidth = 30;
++        private const int minHeight = 30;
+ 
+         private Rectangle rectSaveO;
+         private Rectangle rectSaveC;
+@@ -144,31 +145,129 @@ namespace lxzh
+ 
+         protected override void OnMouseWheel(MouseEventArgs e) {
+             if (bMouseEnter) {
+-                float nIncrement = 0;
+-                if (e.Delta > 0) {
+-                    if (this.Width < Screen.PrimaryScreen.Bounds.Width
+-                        || this.Height < Screen.PrimaryScreen.Bounds.Height)
+-                        nIncrement = 0.1F;
+-                    else return;
+-                }
+-                if (e.Delta < 0) {
+-                    if (this.Width > 100 || this.Height > 30)
+-                        nIncrement = -0.1F;
+-                    else return;
+-                }
+-
+-                fScale += nIncrement;
+-                this.SuspendLayout();
+-                if (!bMinimum && !bMaxmum) {
+-                    int x = (int)(MousePosition.X - (int)(e.X / (fScale - nIncrement)) * fScale);
+-                    int y = (int)(MousePosition.Y - (int)(e.Y / (fScale - nIncrement)) * fScale);
+-                    this.Location = new Point(x,y);
+-                }
+-                this.Size = new Size((int)(szForm.Width * fScale + 2),(int)(szForm.Height * fScale + 2));
+-                this.ResumeLayout();
+-            }
++                //float nIncrement = 0;
++                //if (e.Delta > 0) {
++                //    if (this.Width < Screen.PrimaryScreen.Bounds.Width
++                //        || this.Height < Screen.PrimaryScreen.Bounds.Height)
++                //        nIncrement = 0.1F;
++                //    else return;
++                //}
++                //if (e.Delta < 0) {
++                //    if (this.Width > 100 || this.Height > 30)
++                //        nIncrement = -0.1F;
++                //    else return;
++                //}
++
++                //fScale += nIncrement;
++                //this.SuspendLayout();
++                //if (!bMinimum && !bMaxmum) {
++                //    int x = (int)(MousePosition.X - (int)(e.X / (fScale - nIncrement)) * fScale);
++                //    int y = (int)(MousePosition.Y - (int)(e.Y / (fScale - nIncrement)) * fScale);
++                //    this.Location = new Point(x,y);
++                //}
++                //this.Size = new Size((int)(szForm.Width * fScale + 2),(int)(szForm.Height * fScale + 2));
++                //this.ResumeLayout();
++                timer.Stop();
++                Zoom(e.Delta);
++            }
+             base.OnMouseWheel(e);
+         }
++
++        private void Zoom(int delta) {
++            
++            if (delta >= 1) {
++                zoomCount = 5;
++            } else if (delta <= -1) {
++                zoomCount = -5;
++            }
++            if (zoomCount != 0) {
++                timer.Start();
++
++            }
++        }
++
++        private void timer_Tick(object sender, EventArgs e) {
++            if (zoomCount > 0) {
++                zoomNum++;
++                zoomOut();
++            } else {
++                zoomNum--;
++                zoomIn();
++            }
++            this.ResumeLayout();
++        }
++        /// <summary>
++        /// 放大
++        /// </summary>
++        private void zoomOut() {
++            int w = this.Width;
++            int h = this.Height;
++            float wDivH = szForm.Width * 1.0F / szForm.Height;
++            fScale  +=0.01F;
++            double deltaW = szForm.Width * 0.01;
++            double deltaH = szForm.Height * 0.01;
++            if (deltaW < 1)
++                deltaW = 1;
++            if (deltaH < 1)
++                deltaH = 1;
++            this.SuspendLayout();
++            if (bMaxmum) {
++                zoomNum = 0;
++                timer.Stop();
++            }
++            int width = Convert.ToInt32(w + deltaW);
++            int height = Convert.ToInt32(h + deltaH);
++            if (height > minHeight) {//校正宽高比
++                height = (int)(width / wDivH);
++            }
++            deltaW = width - w;
++            deltaH = height - h;
++            Size newSize = new Size(width, height);
++            int deltaX = (int)(deltaW * ((MousePosition.X - this.Location.X) * 1.0 / w));
++            int deltaY = (int)(deltaH * ((MousePosition.Y - this.Location.Y) * 1.0 / h));
++            this.Location = new Point(this.Location.X - deltaX, this.Location.Y - deltaY);
++            this.Size = newSize;
++            if (zoomNum >= 25) {
++                zoomNum = 0;
++                timer.Stop();
++            }
++        }
++        /// <summary>
++        /// 缩小
++        /// </summary>
++        private void zoomIn() {
++            int w = this.Width;
++            int h = this.Height;
++            float wDivH = szForm.Width * 1.0F / szForm.Height;
++            fScale -= 0.01F;
++            double deltaW = szForm.Width * 0.01;
++            double deltaH = szForm.Height * 0.01;
++            if (deltaW < 1)
++                deltaW = 1;
++            if (deltaH < 1)
++                deltaH = 1;
++            this.SuspendLayout();
++            if (bMinimum) {
++                zoomNum = 0;
++                timer.Stop();
++            }
++            int width = Convert.ToInt32(w - deltaW);
++            int height = Convert.ToInt32(h - deltaH);
++            if (height > minHeight) {//校正宽高比
++                height = (int)(width / wDivH);
++            }
++            deltaW = w - width;
++            deltaH = h - height;
++            Size newSize = new Size(width, height);
++            int deltaX = (int)(deltaW * ((MousePosition.X - this.Location.X) * 1.0 / w));
++            int deltaY = (int)(deltaH * ((MousePosition.Y - this.Location.Y) * 1.0 / h));
++            this.Location = new Point(this.Location.X + deltaX, this.Location.Y + deltaY);
++            this.Size = newSize;
++            if (zoomNum <= -25) {
++                zoomNum = 0;
++                timer.Stop();
++            }
++        }
+ 
+         protected override void OnPaint(PaintEventArgs e) {
+             if (bitmap == null) {
+@@ -237,15 +336,12 @@ namespace lxzh
+         protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
+             int w = Screen.PrimaryScreen.Bounds.Width;
+             int h = Screen.PrimaryScreen.Bounds.Height;
+-            if (width < 100) 
+-                width = 100;
+-            if (width > Screen.PrimaryScreen.Bounds.Width) 
+-                width = w;
+-            if (height < 30) height = 30;
+-            if (height > Screen.PrimaryScreen.Bounds.Height) 
+-                height = h;
+-            bMinimum = width == 100 || height == 30;
+-            bMaxmum = width == w || height == h;
++            if (width < minWidth) width = minWidth;
++            if (width > Screen.PrimaryScreen.Bounds.Width) width = w;
++            if (height < minHeight) height = minHeight;
++            if (height > Screen.PrimaryScreen.Bounds.Height) height = h;
++            bMinimum = (width == minWidth || height == minHeight);
++            bMaxmum = (width == w || height == h);
+             if (bMaxmum) 
+                 x = y = 0;
+             base.SetBoundsCore(x, y, width, height, specified);
+@@ -297,23 +393,23 @@ namespace lxzh
+             }
+             using (Bitmap bmp = new Bitmap(this.Width - 2, this.Height - 2, PixelFormat.Format24bppRgb)) {
+                 using (Graphics g = Graphics.FromImage(bmp)) {
+-                    g.DrawImage(bmp, 0, 0, bmp.Width, bmp.Height);
++                    g.DrawImage(bitmap, 0, 0, this.Width - 2, this.Height - 2);
+                     Clipboard.SetImage(bmp);
+                 }
+             }
+         }
+ 
+         private void SaveBmp(bool bOriginal) {
+-            SaveFileDialog saveDlg = new SaveFileDialog();
+-            saveDlg.Filter = "Bitmap(*.bmp)|*.bmp|JPEG(*.jpg)|*.jpg|PNG(*.png)|*.png";
+-            saveDlg.FilterIndex = 3;
++            saveDlg.Filter = Util.SUPPORT_EXTENSION_FILTER;
++            saveDlg.FilterIndex = 3;
+             saveDlg.FileName = Util.GetSavePicPath();
+             if (saveDlg.ShowDialog() == DialogResult.OK) {
+-                using (Bitmap bmp = bOriginal ? bitmap.Clone() as Bitmap :
+-                    new Bitmap(this.Width - 2, this.Height - 2, PixelFormat.Format24bppRgb)) {
+-                    if (bOriginal) {
+-                        using (Graphics g = Graphics.FromImage(bmp)) {
++                using (Bitmap bmp = bOriginal ? bitmap.Clone() as Bitmap : new Bitmap(this.Width - 2, this.Height - 2, PixelFormat.Format24bppRgb)) {
++                    using (Graphics g = Graphics.FromImage(bmp)) {
++                        if (bOriginal) {
+                             g.DrawImage(bmp, 0, 0, this.Width - 2, this.Height - 2);
++                        } else {
++                            g.DrawImage(bitmap, 0, 0, this.Width - 2, this.Height - 2);
+                         }
+                     }
+                     switch (saveDlg.FilterIndex) {
+@@ -327,8 +423,10 @@ namespace lxzh
+                             bmp.Save(saveDlg.FileName, ImageFormat.Png);
+                             break;
+                     }
++                    Clipboard.SetImage(bmp);
+                 }
+             }
+         }
++
+     }
+ }
+diff --git a/lxzhASS/LxzhView/Toast.cs b/lxzhASS/LxzhView/Toast.cs
+index 2853b29..3bd7a1d 100644
+--- a/lxzhASS/LxzhView/Toast.cs
++++ b/lxzhASS/LxzhView/Toast.cs
+@@ -1,12 +1,6 @@
+-﻿using System;
+-using System.Collections.Generic;
+-using System.ComponentModel;
+-using System.Data;
+-using System.Drawing;
+-using System.Linq;
+-using System.Text;
+-using System.Windows.Forms;
+-using System.Drawing.Drawing2D;
++﻿using System;
++using System.Drawing;
++using System.Windows.Forms;
+ using System.Threading;
+ using System.IO;
+ using System.Diagnostics;
+@@ -47,8 +41,8 @@ namespace lxzh {
+             while (diaplayText.Contains("\n ")) {
+                 diaplayText = diaplayText.Replace("\n ", "\n");
+             }
+-            string[] textArray = diaplayText.Split('\n');
+-            line = textArray.Count();
++            string[] textArray = diaplayText.Split('\n');
++            line = textArray.Length;
+             Font stringFont = new Font("微软雅黑", 10);
+             Graphics g = lblDisplayText.CreateGraphics();
+             int width = 0;
