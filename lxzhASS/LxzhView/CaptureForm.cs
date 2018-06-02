@@ -1,14 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-
-using System.Threading;
-using System.Drawing.Drawing2D;
-using System.Reflection;
+using System.Linq;
 
 namespace lxzh
 {
@@ -26,8 +21,10 @@ namespace lxzh
         private Cursor crossCursor;
         public static bool isAlive = false;
 
-        private static int maxHeight = 0;
-        private static int maxWidth = 0;
+        private int maxHeight = 0;
+        private int maxWidth = 0;
+
+        private Rectangle clipRect;
 
         #region Properties
 
@@ -607,12 +604,14 @@ namespace lxzh
                         this.Close();
                         break;
                 }
+                Util.SaveRectInfo(imageProcessBox.SelectedRect);
             }
             //m_bSave = false;
         }
         //将图像保存到剪贴板
         private void tBtn_Finish_Click(object sender, EventArgs e) {
             Clipboard.SetImage(bmpLayerCurrent);
+            Util.SaveRectInfo(imageProcessBox.SelectedRect);
             this.Close();
         }
 
@@ -651,7 +650,25 @@ namespace lxzh
                 Win32.LPRECT lprect = new Win32.LPRECT();
                 Win32.GetWindowRect(hWnd, out lprect);
                 Rectangle rect = new Rectangle(lprect.Left, lprect.Top, lprect.Right - lprect.Left, lprect.Bottom - lprect.Top);
-                if (clipRect.Contains(curPos)) {
+                Screen curScreen = Screen.AllScreens.FirstOrDefault(s => s.Bounds.Contains(curPos));
+                if (curScreen != null) {
+                    Rectangle screenRect = curScreen.WorkingArea;
+                    if (rect.Width > screenRect.Width || rect.Height > screenRect.Height) {
+                        int dW = rect.Width - screenRect.Width;
+                        int dH = rect.Height - screenRect.Height;
+                        int dX = screenRect.Left - rect.Left;
+                        int dY = screenRect.Top - rect.Top;
+                        if (dX * 2 == dW) {
+                            rect.X += dX;
+                            rect.Width -= dW;
+                        }
+                        if (dY * 2 == dH) {
+                            rect.Y += dY;
+                            rect.Height -= dH;
+                        }
+                    }
+                }
+                if (clipRect!=Rectangle.Empty&&clipRect.Contains(curPos)) {
                     rect = clipRect;
                 }
                 imageProcessBox.SetSelectRect(rect);
@@ -667,7 +684,7 @@ namespace lxzh
             using (Graphics g = Graphics.FromImage(bmp)) {
                 g.CopyFromScreen(0, 0, 0, 0, bmp.Size);
                 if (!bFromClipBoard) {
-                    clipRect = new Rectangle(0, 0, bmp.Width, bmp.Height);
+                    clipRect = Rectangle.Empty;
                 } else {
                     Point curPos = Cursor.Position;
                     using (Image imgClip = Clipboard.GetImage()) {
@@ -687,7 +704,7 @@ namespace lxzh
                                 g.DrawImage(imgClip, clipRect);
                             }
                         } else {
-                            clipRect = new Rectangle(0, 0, bmp.Width, bmp.Height);
+                            clipRect = Rectangle.Empty;
                         }
                     }
                 }
