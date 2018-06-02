@@ -666,16 +666,28 @@ namespace lxzh
             //做完以上操作 才开始捕获桌面图像
             using (Graphics g = Graphics.FromImage(bmp)) {
                 g.CopyFromScreen(0, 0, 0, 0, bmp.Size);
-                if (!bFromClipBoard)
-                    return bmp;
-                using (Image imgClip = Clipboard.GetImage()) {
-                    if (imgClip != null) {
-                        using (SolidBrush sb = new SolidBrush(Color.FromArgb(150, 0, 0, 0))) {
-                            g.FillRectangle(sb, 0, 0, bmp.Width, bmp.Height);
-                            g.DrawImage(imgClip,
-                                (bmp.Width - imgClip.Width) >> 1,
-                                (bmp.Height - imgClip.Height) >> 1,
-                                imgClip.Width, imgClip.Height);
+                if (!bFromClipBoard) {
+                    clipRect = new Rectangle(0, 0, bmp.Width, bmp.Height);
+                } else {
+                    Point curPos = Cursor.Position;
+                    using (Image imgClip = Clipboard.GetImage()) {
+                        if (imgClip != null) {
+                            using (SolidBrush sb = new SolidBrush(Color.FromArgb(150, 0, 0, 0))) {
+                                g.FillRectangle(sb, 0, 0, bmp.Width, bmp.Height);
+                                clipRect = new Rectangle((bmp.Width - imgClip.Width) >> 1,
+                                    (bmp.Height - imgClip.Height) >> 1, imgClip.Width, imgClip.Height);
+                                Screen curScreen = Screen.AllScreens.FirstOrDefault(s => s.Bounds.Contains(curPos));
+                                if (curScreen != null) {
+                                    Rectangle screenRect = curScreen.Bounds;
+                                    if (imgClip.Width <= screenRect.Width && imgClip.Height <= screenRect.Height) {
+                                        clipRect = new Rectangle(screenRect.Left + ((screenRect.Width - imgClip.Width) >> 1),
+                                        screenRect.Top + ((screenRect.Height - imgClip.Height) >> 1), imgClip.Width, imgClip.Height);
+                                    }
+                                }
+                                g.DrawImage(imgClip, clipRect);
+                            }
+                        } else {
+                            clipRect = new Rectangle(0, 0, bmp.Width, bmp.Height);
                         }
                     }
                 }
