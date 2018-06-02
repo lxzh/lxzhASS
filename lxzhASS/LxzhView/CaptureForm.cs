@@ -633,8 +633,9 @@ namespace lxzh
         //根据鼠标位置找寻窗体并绘制边框
         private void FoundAndDrawWindowRect() {
             Win32.LPPOINT pt = new Win32.LPPOINT();
-            pt.X = MousePosition.X; 
-            pt.Y = MousePosition.Y;
+            Point curPos=MousePosition;
+            pt.X = curPos.X; 
+            pt.Y = curPos.Y;
             IntPtr hWnd = Win32.ChildWindowFromPointEx(Win32.GetDesktopWindow(), pt,
                 Win32.CWP_SKIPINVISIBL | Win32.CWP_SKIPDISABLED);
             if (hWnd != IntPtr.Zero) {
@@ -645,11 +646,15 @@ namespace lxzh
                     if (hTemp == IntPtr.Zero || hTemp == hWnd)
                         break;
                     hWnd = hTemp;
-                    pt.X = MousePosition.X; pt.Y = MousePosition.Y; //坐标还原为屏幕坐标
+                    pt.X = curPos.X; pt.Y = curPos.Y; //坐标还原为屏幕坐标
                 }
-                Win32.LPRECT rect = new Win32.LPRECT();
-                Win32.GetWindowRect(hWnd, out rect);
-                imageProcessBox.SetSelectRect(new Rectangle(rect.Left, rect.Top, rect.Right - rect.Left, rect.Bottom - rect.Top));
+                Win32.LPRECT lprect = new Win32.LPRECT();
+                Win32.GetWindowRect(hWnd, out lprect);
+                Rectangle rect = new Rectangle(lprect.Left, lprect.Top, lprect.Right - lprect.Left, lprect.Bottom - lprect.Top);
+                if (clipRect.Contains(curPos)) {
+                    rect = clipRect;
+                }
+                imageProcessBox.SetSelectRect(rect);
             }
         }
         //获取桌面图像
