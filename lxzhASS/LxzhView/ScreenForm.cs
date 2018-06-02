@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+using System;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using System.IO;
 
 namespace lxzh
 {
@@ -34,7 +28,7 @@ namespace lxzh
             if (hotkeyId == Util.HOTKEY_ACTIVE.KeyId) {
                 rect = FormUtil.getForeWinRect();
             } else if (hotkeyId == Util.HOTKEY_LAST.KeyId) {
-                rect = getFormInfo(rect);
+                rect = Util.GetSavedRect(rect);
             }
             if (rect.Left < 0) {
                 rect.Width += rect.Left;
@@ -51,27 +45,12 @@ namespace lxzh
 
             string filename = Util.GetSavePicPath();
             bmp.Save(filename);
-            saveFormInfo(rect);
+            Util.SaveRectInfo(rect);
             Clipboard.SetImage(bmp);
 
             //Toast toast = new Toast(2, string.Format("已截图保存至：\n{0}", filename));
             //toast.StartPos = ContentAlignment.BottomRight;
             //toast.Show();
-        }
-
-        private Rectangle getFormInfo(Rectangle rect) {
-            int x = Int32.Parse(IniFile.ReadIniData(Util.FORM_SECTION, "x", rect.Left + ""));
-            int y = Int32.Parse(IniFile.ReadIniData(Util.FORM_SECTION, "y", rect.Top + ""));
-            int w = Int32.Parse(IniFile.ReadIniData(Util.FORM_SECTION, "width", rect.Width + ""));
-            int h = Int32.Parse(IniFile.ReadIniData(Util.FORM_SECTION, "height", rect.Height + ""));
-            return new Rectangle(x, y, w, h);
-        }
-
-        private void saveFormInfo(Rectangle rect) {
-            IniFile.WriteIniData(Util.FORM_SECTION, "x", rect.Left + "");
-            IniFile.WriteIniData(Util.FORM_SECTION, "y", rect.Top + "");
-            IniFile.WriteIniData(Util.FORM_SECTION, "width", rect.Width + "");
-            IniFile.WriteIniData(Util.FORM_SECTION, "height", rect.Height + "");
         }
     }
 }
