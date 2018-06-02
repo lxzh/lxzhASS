@@ -152,6 +152,21 @@ namespace lxzh
                 CreateDeepFolder(path);
             return string.Format("{0}\\{1}.{2}", path, DateTime.Now.ToString("yyyyMMdd HHmmss"), extention);
         }
+        
+        public static Rectangle GetSavedRect(Rectangle rect) {
+            int x = Int32.Parse(IniFile.ReadIniData(Util.FORM_SECTION, "x", rect.Left + ""));
+            int y = Int32.Parse(IniFile.ReadIniData(Util.FORM_SECTION, "y", rect.Top + ""));
+            int w = Int32.Parse(IniFile.ReadIniData(Util.FORM_SECTION, "width", rect.Width + ""));
+            int h = Int32.Parse(IniFile.ReadIniData(Util.FORM_SECTION, "height", rect.Height + ""));
+            return new Rectangle(x, y, w, h);
+        }
+
+        public static void SaveRectInfo(Rectangle rect) {
+            IniFile.WriteIniData(Util.FORM_SECTION, "x", rect.Left + "");
+            IniFile.WriteIniData(Util.FORM_SECTION, "y", rect.Top + "");
+            IniFile.WriteIniData(Util.FORM_SECTION, "width", rect.Width + "");
+            IniFile.WriteIniData(Util.FORM_SECTION, "height", rect.Height + "");
+        }
 
         private static bool CreateDeepFolder(string path) {
             bool result;
