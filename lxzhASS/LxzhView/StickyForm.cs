@@ -400,14 +400,17 @@ namespace lxzh
         }
 
         private void SaveBmp(bool bOriginal) {
-            SaveFileDialog saveDlg = new SaveFileDialog();
             saveDlg.Filter = Util.SUPPORT_EXTENSION_FILTER;
             saveDlg.FilterIndex = 3;
             saveDlg.FileName = Util.GetSavePicPath();
             if (saveDlg.ShowDialog() == DialogResult.OK) {
                 using (Bitmap bmp = bOriginal ? bitmap.Clone() as Bitmap : new Bitmap(this.Width - 2, this.Height - 2, PixelFormat.Format24bppRgb)) {
                     using (Graphics g = Graphics.FromImage(bmp)) {
-                        g.DrawImage(bmp, 0, 0, this.Width - 2, this.Height - 2);
+                        if (bOriginal) {
+                            g.DrawImage(bmp, 0, 0, this.Width - 2, this.Height - 2);
+                        } else {
+                            g.DrawImage(bitmap, 0, 0, this.Width - 2, this.Height - 2);
+                        }
                     }
                     switch (saveDlg.FilterIndex) {
                         case 1:
