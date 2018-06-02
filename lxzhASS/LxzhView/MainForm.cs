@@ -423,8 +423,6 @@ namespace lxzh {
                 #region 注册新设置的快捷键
                 for (int i = 0; i < hotKeyCount; i++) {
                     if (hotKeys[i].RegistedHotkey != hotKeys[i].Hotkey) {
-                        IniFile.WriteIniData(Util.CONFIG_SECTION, hotKeys[i].KeyName, hotKeys[i].Hotkey);
-                        result &= HotKey.RegisteSetHotkey(Program.mainForm.Handle, hotKeys[i]);
                         bool rst = HotKey.RegisteSetHotkey(Program.mainForm.Handle, hotKeys[i]);
                         if (rst) {
                             IniFile.WriteIniData(Util.CONFIG_SECTION, hotKeys[i].KeyName, hotKeys[i].Hotkey);
