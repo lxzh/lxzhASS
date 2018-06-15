@@ -166,8 +166,6 @@ namespace lxzh
             //new object[] { customCursorHandle });
             crossCursor = new Cursor(global::lxzh.Properties.Resources.cross.GetHicon());
             isAlive = true;
-            //timer1.Interval = 500;
-            //timer1.Enabled = true;
         }
 
         private void mHook_MHookEvent(object sender, MHookEventArgs e) {
@@ -625,10 +623,6 @@ namespace lxzh
             this.Close();
         }
 
-        private void timer1_Tick(object sender, EventArgs e) {
-            //if (!this.Enabled)
-            //    imageProcessBox.SetInfoPoint(MousePosition.X, MousePosition.Y);
-        }
         //根据鼠标位置找寻窗体并绘制边框
         private void FoundAndDrawWindowRect() {
             Win32.LPPOINT pt = new Win32.LPPOINT();
