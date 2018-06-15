@@ -103,13 +103,9 @@
             this.plColorBox.Location = new System.Drawing.Point(12, 114);
             this.plColorBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.plColorBox.Name = "plColorBox";
-            this.plColorBox.Size = new System.Drawing.Size(199, 32);
+            this.plColorBox.Size = new System.Drawing.Size(235, 35);
             this.plColorBox.TabIndex = 2;
             this.plColorBox.Visible = false;
-            // 
-            // timer1
-            // 
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // pictureBox1
             // 
@@ -142,10 +138,10 @@
             this.fontBox.CtrlProperties = controlProperties1;
             this.fontBox.ForeColor = System.Drawing.SystemColors.ControlText;
             this.fontBox.Items = ((System.Collections.Generic.List<string>)(resources.GetObject("fontBox.Items")));
-            this.fontBox.Location = new System.Drawing.Point(26, 7);
+            this.fontBox.Location = new System.Drawing.Point(4, 5);
             this.fontBox.Margin = new System.Windows.Forms.Padding(2);
             this.fontBox.Name = "fontBox";
-            this.fontBox.Size = new System.Drawing.Size(43, 18);
+            this.fontBox.Size = new System.Drawing.Size(68, 25);
             this.fontBox.TabIndex = 6;
             this.fontBox.TabStop = false;
             this.fontBox.Text = "10";
