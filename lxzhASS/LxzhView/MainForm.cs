@@ -323,13 +323,17 @@ namespace lxzh {
                 case Win32.WM_HOTKEY:
                     int keyid = m.WParam.ToInt32();
                     if (keyid == Util.HOTKEY_WHOLE.KeyId) {
-                        SaveScreen(keyid);
+                        SaveScreen(Screen.PrimaryScreen.Bounds);
                     } else if (keyid == Util.HOTKEY_ACTIVE.KeyId) {
-                        SaveScreen(keyid);
+                        SaveScreen(FormUtil.getForeWinRect());
                     } else if (keyid == Util.HOTKEY_FREE.KeyId) {
                         StartCapture(false);
                     } else if (keyid == Util.HOTKEY_LAST.KeyId) {
-                        SaveScreen(keyid);
+                        Rectangle rect = Util.GetSavedRect();
+                        if (rect.Equals(Rectangle.Empty)) {
+                            rect = Screen.PrimaryScreen.Bounds;
+                        }
+                        SaveScreen(rect);
                     } else if (keyid == Util.HOTKEY_CLIP.KeyId) {
                         StartCapture(true);
                     } else if (keyid == Util.HOTKEY_TXTPIN.KeyId) {
@@ -350,8 +354,8 @@ namespace lxzh {
             base.DefWndProc(ref m); 
         }
 
-        private void SaveScreen(int hotkeyId) {
-            ScreenForm sf = new ScreenForm(hotkeyId);
+        private void SaveScreen(Rectangle rect) {
+            ScreenForm sf = new ScreenForm(rect);
             sf.Show();
             sf.Close();
         }
@@ -481,9 +485,9 @@ namespace lxzh {
         /// </summary>
         /// <returns></returns>
         private bool checkHotkeyConflit() {
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < hotKeyCount; i++) {
                 for (int j = i + 1; j < hotKeyCount; j++) {
-                    if (hotKeys[j].Hotkey == hotKeys[i].Hotkey) {
+                    if (hotKeys[j].Hotkey == hotKeys[i].Hotkey && i!=j) {
                         new Toast(2, "快捷键存在冲突,请重新设置").Show();
                         object cbbKeys = Util.GetControlByName(this, "cbbKeys" + (j + 1));
                         if (cbbKeys != null) {
