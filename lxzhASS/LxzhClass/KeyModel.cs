@@ -113,19 +113,31 @@ namespace lxzh {
         /// <returns>是否包含辅助键</returns>
         public bool setHotkey(bool[] isChecked,int keyindex) {
             hotkey = "";
-            if (isChecked[1])
+            if (hotKeyValue == null || hotKeyValue.Length != 5) {
+                hotKeyValue = new int[5];
+            }
+            hotKeyValue[1] = isChecked[1] ? 1 : 0;
+            hotKeyValue[0] = isChecked[0] ? 1 : 0;
+            hotKeyValue[2] = isChecked[2] ? 1 : 0;
+            hotKeyValue[3] = isChecked[3] ? 1 : 0;
+            hotKeyValue[4] = keyindex;
+            if (isChecked[1]) {
                 hotkey += "Ctrl+";
-            if (isChecked[0])
+            }
+            if (isChecked[0]) {
                 hotkey += "Alt+";
-            if (isChecked[2])
+            }
+            if (isChecked[2]) {
                 hotkey += "Shift+";
-            if (isChecked[3])
+            }
+            if (isChecked[3]) {
                 hotkey += "Win+";
+            }
             hotkey += (char)('A' + keyindex);
             if (!isValueChanged && preHotkey != hotkey) {
                 isValueChanged = true;
             }
-            return hotkey.Length>1;
+            return hotkey.Length > 1;
         }
         public string setHotkey(int[] hotKeyValue) {
             hotkey = "";
