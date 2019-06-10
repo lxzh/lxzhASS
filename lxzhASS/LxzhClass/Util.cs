@@ -153,12 +153,15 @@ namespace lxzh
             return string.Format("{0}\\{1}.{2}", path, DateTime.Now.ToString("yyyyMMdd HHmmss"), extention);
         }
         
-        public static Rectangle GetSavedRect(Rectangle rect) {
+        public static Rectangle GetSavedRect() {
+            Rectangle rect = Rectangle.Empty;
             int x = Int32.Parse(IniFile.ReadIniData(Util.FORM_SECTION, "x", rect.Left + ""));
             int y = Int32.Parse(IniFile.ReadIniData(Util.FORM_SECTION, "y", rect.Top + ""));
             int w = Int32.Parse(IniFile.ReadIniData(Util.FORM_SECTION, "width", rect.Width + ""));
             int h = Int32.Parse(IniFile.ReadIniData(Util.FORM_SECTION, "height", rect.Height + ""));
-            return new Rectangle(x, y, w, h);
+            rect = new Rectangle(x, y, w, h);
+            Console.WriteLine(string.Format("GetSavedRect({0},{1},{2},{3})", rect.Left, rect.Top, rect.Width, rect.Height));
+            return rect;
         }
 
         public static void SaveRectInfo(Rectangle rect) {
@@ -166,6 +169,7 @@ namespace lxzh
             IniFile.WriteIniData(Util.FORM_SECTION, "y", rect.Top + "");
             IniFile.WriteIniData(Util.FORM_SECTION, "width", rect.Width + "");
             IniFile.WriteIniData(Util.FORM_SECTION, "height", rect.Height + "");
+            Console.WriteLine(string.Format("SaveRectInfo({0},{1},{2},{3})", rect.Left, rect.Top, rect.Width, rect.Height));
         }
 
         private static bool CreateDeepFolder(string path) {
