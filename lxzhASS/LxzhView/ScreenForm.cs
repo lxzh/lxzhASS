@@ -6,30 +6,19 @@ namespace lxzh
 {
     public partial class ScreenForm : Form
     {
-        private int hotkeyId;
-
-        public int HotkeyId {
-            get { return hotkeyId; }
-            set { hotkeyId = value; }
-        }
+        private Rectangle rect;
 
         public ScreenForm()
         {
             InitializeComponent();
         }
-        public ScreenForm(int hotkeyId) {
+        public ScreenForm(Rectangle rect) {
             InitializeComponent();
-            this.hotkeyId = hotkeyId;
+            this.rect = rect;
         }
 
         private void ScreenForm_Load(object sender, EventArgs e)
         {
-            Rectangle rect = Screen.PrimaryScreen.Bounds;
-            if (hotkeyId == Util.HOTKEY_ACTIVE.KeyId) {
-                rect = FormUtil.getForeWinRect();
-            } else if (hotkeyId == Util.HOTKEY_LAST.KeyId) {
-                rect = Util.GetSavedRect(rect);
-            }
             if (rect.Left < 0) {
                 rect.Width += rect.Left;
                 rect.X = 0;
@@ -40,7 +29,7 @@ namespace lxzh
             }
             Bitmap bmp = new Bitmap(rect.Width, rect.Height);
             Graphics g = Graphics.FromImage(bmp);
-
+            Console.WriteLine(string.Format("rect({0},{1},{2},{3})",rect.Left, rect.Top, rect.Width,rect.Height));
             g.CopyFromScreen(rect.Left, rect.Top, 0, 0, new Size(rect.Width, rect.Height));
 
             string filename = Util.GetSavePicPath();
