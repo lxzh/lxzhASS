@@ -413,7 +413,7 @@ namespace lxzh {
                 IniFile.WriteIniData(Util.CONFIG_SECTION, Util.SAVE_PIC_PATH, txtSavePath.Text);
 
                 for (int i = 0; i < hotKeyCount; i++) {
-                    if (!hotKeys[i].setHotkey(new bool[] { chkHotkeys[i][0].Checked, chkHotkeys[i][1].Checked, chkHotkeys[i][2].Checked, chkHotkeys[i][3].Checked }, cbbHotkeys[i].SelectedIndex)) {
+                    if (!hotKeys[i].setHotkey(new bool[] { chkHotkeys[i][2].Checked, chkHotkeys[i][0].Checked, chkHotkeys[i][1].Checked, chkHotkeys[i][3].Checked }, cbbHotkeys[i].SelectedIndex)) {
                         cbbHotkeys[i].Select();
                         new Toast(1, "请至少选择一个辅助键(Ctrl/Alt/Shift/Win)！").Show();
                         return false;
