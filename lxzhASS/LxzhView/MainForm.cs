@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.IO;
+using System.Text;
 
 namespace lxzh {
     public partial class MainForm : Form {
@@ -259,9 +260,14 @@ namespace lxzh {
 
         private bool registHotKey() {
             bool result = true;
+            bool[] results = new bool[hotKeyCount];
+            StringBuilder strBuilder = new StringBuilder();
             for (int i = 0; i < hotKeyCount; i++) {
-                result = result && HotKey.RegisteHotkeyFromIni(Handle,hotKeys[i]);
+                results[i] = HotKey.RegisteHotkeyFromIni(Handle,hotKeys[i]);
+                result = result && results[i];
+                strBuilder.AppendLine(string.Format("{0}:{1}",i,results[i]));
             }
+            Logger.getInstance(Util.LOG_FILE_NAME).writeMsg(strBuilder.ToString());
             return result;
         }
 

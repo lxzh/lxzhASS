@@ -185,5 +185,20 @@ namespace lxzh {
             g.Dispose();
             return true;
         }
+
+        [DllImport("kernel32.dll ", CharSet = CharSet.Auto)]
+        public static extern uint WinExec(string lpCmdLine, uint uCmdShow);
+        [DllImport("shell32.dll")]
+        public extern static int ShellExecute(IntPtr hwnd, string lpOperation, string lpFile, string lpParameters, string lpDirectory, int nShowCmd);
+
+        [DllImport("kernel32.dll")]
+        public static extern IntPtr _lopen(string lpPathName, int iReadWrite);
+
+        [DllImport("kernel32.dll")]
+        public static extern bool CloseHandle(IntPtr hObject);
+
+        public const int OF_READWRITE = 2;
+        public const int OF_SHARE_DENY_NONE = 0x40;
+        public static IntPtr HFILE_ERROR = new IntPtr(-1);
     }
 }

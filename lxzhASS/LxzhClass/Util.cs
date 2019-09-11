@@ -36,6 +36,9 @@ namespace lxzh
         public static KeyModel HOTKEY_TXTPIN = new KeyModel("hotkey_pin", "从剪贴板贴文本", "Ctrl+Shift+T", "T", 105);
 
         public static KeyModel HOTKEY_EXIT = new KeyModel("hotkey_exit", "退出程序", "Ctrl+Shift+E", "E", 106);
+
+        public static string LOG_FILE_NAME = "app_log.log";
+
         /// <summary>
         /// 字母按键个数
         /// </summary>
@@ -181,6 +184,14 @@ namespace lxzh
             di.Create();
             result = true;
             return result;
+        }
+
+        /// <summary>
+        /// 生成唯一的32位字符串ID
+        /// </summary>
+        /// <returns></returns>
+        public static string GUID {
+            get { return Guid.NewGuid().ToString().Replace("-", ""); }
         }
     }
 

@@ -67,6 +67,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LxzhClass\Logger.cs" />
     <Compile Include="LxzhControl\LTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
