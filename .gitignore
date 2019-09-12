@@ -1,3 +1,6 @@
-bin
+*.exe
+*.pdb
+*.config
+*.manifest
 *.suo
 lxzhASS/obj
